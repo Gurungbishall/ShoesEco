@@ -5,7 +5,7 @@ export default function BrandLogoList() {
   function Image({ src, alt }: { src: string; alt: string }) {
     return (
       <>
-        <div className="flex flex-col justify-center items-center gap-2">
+        <div className="flex flex-col justify-center items-center gap-2 cursor-pointer">
           <img
             className="p-2 size-14 bg-stone-400 border-2 rounded-full"
             src={src}

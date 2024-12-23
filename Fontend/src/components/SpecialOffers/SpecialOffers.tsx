@@ -12,7 +12,7 @@ export default function SpecialOffers() {
       <div className="p-3 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <i className="fa-solid fa-arrow-left fa-2x" onClick={toggleHome} />
+            <i className="fa-solid fa-arrow-left fa-2x cursor-pointer" onClick={toggleHome} />
             <span className="text-xl font-bold">Special Offers</span>
           </div>
           <i className="bx bx-dots-horizontal-rounded p-1 border-2 border-black rounded-full" />

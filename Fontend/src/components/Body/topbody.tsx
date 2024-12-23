@@ -9,10 +9,10 @@ export default function TopBody() {
   };
   return (
     <>
-      <div className="p-3 flex flex-col gap-3">
+      <div className="flex flex-col gap-3">
         <div className="flex justify-between font-bold">
           <span className="text-xl">Special Offers</span>
-          <span onClick={handleSeeAll}>See all</span>
+          <span onClick={handleSeeAll} className="cursor-pointer">See all</span>
         </div>
         <div className="bg-stone-400 h-52 rounded-lg mb-4 relative">
           <div className="flex justify-between items-center h-full">
