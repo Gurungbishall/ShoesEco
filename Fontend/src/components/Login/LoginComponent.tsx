@@ -1,26 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "../Button";
 import Input from "../Input";
-import Label from "../Label";
+
+interface IFormInput {
+  email: string;
+  password: string;
+}
 
 export default function LoginComponent() {
-  const [loading, setLoading] = useState(false);
-  const [visibility, setVisibility] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [visibility, setVisibility] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
-    if (!email || !password) {
-      setError("Please enter both email and password.");
-      return;
-    }
+  const { register, handleSubmit } = useForm<IFormInput>();
 
-    setError("");
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const { email, password } = data;
+
     setLoading(true);
+    setError("");
 
     try {
       const response = await fetch("http://localhost:3000/signin", {
@@ -50,50 +52,63 @@ export default function LoginComponent() {
   };
 
   const toggleToSignupPage = () => {
-    navigate('/signup');
+    navigate("/signup");
   };
 
   return (
     <>
-      <div className="xl:w-1/4 p-3 flex flex-col gap-3 rounded-lg border-2 shadow-lg">
-        <span className="text-2xl font-bold text-center">Sign In</span>
-        <Label Name="Email Address" />
-        <Input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <div className="flex justify-between">
-          <Label Name="Password" />
+      <div className="w-screen h-screen px-4 flex flex-col gap-3  justify-center">
+        <span className="text-2xl font-bold text-center">
+          Login in Your Account
+        </span>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <div className="relative flex items-center">
+            <i className="bx bxs-envelope absolute left-1" />
+            <Input
+              type="email"
+              placeholder="Email"
+              {...register("email", { required: "Email is required" })}
+            />
+          </div>
+
+          <div className="relative flex items-center">
+            <i className="bx bxs-lock-alt absolute left-1" />
+
+            <Input
+              placeholder="Password"
+              type={visibility ? "text" : "password"}
+              {...register("password", { required: "Password is required" })}
+            />
+
+            <i
+              className={`fa-regular ${
+                visibility ? "fa-eye-slash" : "fa-eye"
+              }  absolute right-3`}
+              onClick={toggleVisibility}
+            />
+          </div>
+
+          {error && <div className="text-red-500">{error}</div>}
+
+          <div>
+            <Button state={loading} type="submit">
+              {loading ? "Loading..." : "Sign in"}
+            </Button>
+          </div>
+        </form>
+
+        <div className="flex flex-col justify-center items-center gap-4">
           <a href="/" className="text-blue-500">
             Forget Password?
           </a>
+          <div>
+            <span>Don't have an account? </span>
+            <span className="font-bold" onClick={toggleToSignupPage}>
+              Sign up
+            </span>
+          </div>
         </div>
-        <div className="relative flex justify-end items-center">
-          <Input
-            type={visibility ? "password" : "text"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <i
-            className={`fa-regular ${
-              visibility ? "fa-eye-slash" : "fa-eye"
-            } fa-xl absolute pr-3`}
-            onClick={toggleVisibility}
-          />
-        </div>
-        {error && <div className="text-red-500">{error}</div>}
-        <div>
-          <Button state={loading} onClick={handleSubmit}>
-            {loading ? "Loading..." : "SIGN IN"}
-          </Button>
-        </div>
-        <button
-          className="text-center font-bold hover:text-blue-600 transition duration-1000 delay-75"
-          onClick={toggleToSignupPage}
-        >
-          Register Now
-        </button>
       </div>
     </>
   );

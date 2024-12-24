@@ -1,19 +1,16 @@
 export default function Input({
   type,
-  value,
-  onChange,
+  placeholder,
 }: {
   type: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder: string;
 }) {
   return (
     <>
       <input
         type={type}
-        value={value}
-        onChange={onChange}
-        className="w-full p-2 border-2 text-xl"
+        placeholder={placeholder}
+        className="w-full pl-6 py-2 text-lg bg-gray-100 focus:outline-black focus:ring-2 focus:ring-black rounded-xl"
       />
     </>
   );
