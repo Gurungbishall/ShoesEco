@@ -4,6 +4,7 @@ import "./index.css";
 import LoginPage from "./pages/Login.tsx";
 import SignUpPage from "./pages/SignUp.tsx";
 import HomePage from "./pages/Home.tsx";
+import Editprofile from "./components/EditProfile/Editprofiel.tsx";
 import SpecialOffers from "./components/SpecialOffers/SpecialOffers.tsx";
 import Mostpopular from "./components/Mostpopular/Mostpopular.tsx";
 import App from "./App.tsx";
@@ -21,6 +22,7 @@ const router = createBrowserRouter(
       <Route path="/signin" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/home" element={<HomePage />} />
+      <Route path="/editprofile" element={<Editprofile />} />
       <Route path="/specialOffers" element={<SpecialOffers />} />
       <Route path="/mostpopular" element={<Mostpopular />} />
     </>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Input from "../Input";
 
-interface SignUpFormData {
+type SignUpFormData ={
   email: string;
   password: string;
   confirmPassword: string;

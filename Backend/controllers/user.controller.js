@@ -66,4 +66,68 @@ const userSignUp = async (req, res) => {
   }
 };
 
-export default { userlogin, userSignUp };
+const getProfile = async (req, res) => {
+  const customerId = req.query.customer_id;
+  if (!customerId) {
+    return res.status(400).json({ message: "Customer ID is required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT full_name, email, phone_number FROM customers WHERE customer_id = $1",
+      [customerId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const editProfile = async (req, res) => {
+  const { full_name, email, phone_number, customer_id } = req.body;
+
+  try {
+    const checkUserQuery = await pool.query(
+      `SELECT * FROM customers WHERE email = $1 AND customer_id != $2`,
+      [email, customer_id]
+    );
+
+    if (checkUserQuery.rows.length > 0) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
+    const result = await pool.query(
+      `UPDATE customers 
+       SET full_name = $1, email = $2, phone_number = $3
+       WHERE customer_id = $4
+       RETURNING customer_id, full_name, email, phone_number`,
+      [full_name, email, phone_number, customer_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "User profile updated successfully",
+      user: {
+        customer_id: result.rows[0].customer_id,
+        full_name: result.rows[0].full_name,
+        email: result.rows[0].email,
+        phone_number: result.rows[0].phone_number,
+      },
+    });
+  } catch (error) {
+    console.error("Error editing profile:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export default { userlogin, userSignUp, getProfile, editProfile };
