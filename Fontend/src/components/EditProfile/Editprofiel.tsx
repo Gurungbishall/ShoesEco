@@ -18,14 +18,23 @@ export default function EditProfile() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const customer_id = sessionStorage.getItem("customer_id");
+    if (!customer_id) {
+      navigate("/login");
+      return;
+    }
+
     axios
-      .get("http://localhost:3000/getProfile")
+      .get(`http://localhost:3000/getProfile?customer_id=${customer_id}`)
       .then((response) => {
         const { full_name, email, phone_number } = response.data;
         setUserData({ full_name, email, phone_number });
       })
-      .catch((error) => console.error("Error fetching user data:", error));
-  }, []);
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        alert("Failed to load user profile data.");
+      });
+  }, [navigate]);
 
   const toggleHome = () => {
     navigate("/home");
@@ -40,22 +49,24 @@ export default function EditProfile() {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setLoading(true);
     try {
-      console.log("Submitted data:", data); 
+      const customer_id = sessionStorage.getItem("user_id");
+      if (!customer_id) return;
 
       const response = await axios.post("http://localhost:3000/editprofile", {
         ...data,
-        customer_id: userData?.customer_id, 
+        customer_id,
       });
 
       if (response.status === 200) {
-        navigate("/profile"); 
+        const customer_Name = response.data.user.full_name;
+        sessionStorage.removeItem("customer_name");
+         sessionStorage.setItem("customer_name", customer_Name);
+        navigate("/editprofile");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error("Error submitting form:", error);
-        if (error.response && error.response.data) {
-          alert(error.response.data.message); 
-        }
+        alert(error?.response?.data?.message || "An unexpected error occurred");
       } else {
         console.error("Unexpected error:", error);
       }
@@ -65,7 +76,7 @@ export default function EditProfile() {
   };
 
   if (!userData) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
@@ -119,7 +130,7 @@ export default function EditProfile() {
             {...register("phone_number", {
               required: "Phone number is required",
               pattern: {
-                value: /^[0-9]{10}$/, 
+                value: /^[0-9]{10}$/,
                 message: "Please enter a valid phone number.",
               },
             })}

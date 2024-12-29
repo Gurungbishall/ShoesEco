@@ -9,7 +9,8 @@ const userlogin = async (req, res) => {
   }
 
   try {
-    const query = "SELECT * FROM customers WHERE email = $1";
+    const query =
+      "SELECT customer_id, full_name, password FROM customers WHERE email = $1";
     const { rows } = await pool.query(query, [email]);
 
     if (rows.length === 0) {
@@ -23,9 +24,10 @@ const userlogin = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-
     res.status(200).json({
       message: "Login successful",
+      name: user.full_name,
+      user_id: user.customer_id,
     });
   } catch (error) {
     console.error(error);
@@ -68,6 +70,7 @@ const userSignUp = async (req, res) => {
 
 const getProfile = async (req, res) => {
   const customerId = req.query.customer_id;
+
   if (!customerId) {
     return res.status(400).json({ message: "Customer ID is required" });
   }
@@ -85,13 +88,16 @@ const getProfile = async (req, res) => {
     res.json(result.rows[0]);
   } catch (error) {
     console.error("Error fetching user data:", error);
-
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
 const editProfile = async (req, res) => {
   const { full_name, email, phone_number, customer_id } = req.body;
+
+  if (!full_name || !email || !phone_number || !customer_id) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
 
   try {
     const checkUserQuery = await pool.query(

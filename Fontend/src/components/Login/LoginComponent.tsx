@@ -27,17 +27,26 @@ export default function LoginComponent() {
   } = useForm<LoginFormInputs>();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
-    console.log("Form submitted with data:", data);
     setLoading(true);
     setError("");
 
     try {
       const response = await axios.post("http://localhost:3000/signin", data);
+
       if (response.status === 200) {
+        const customer_Name = response.data.name;
+        const customer_ID = response.data.user_id;
+        sessionStorage.setItem("customer_name", customer_Name);
+        sessionStorage.setItem("customer_id", customer_ID);
+
         navigate("/home");
       }
     } catch (error: any) {
-      setError("An error occurred.");
+      if (error.response) {
+        setError(error.response.data.message || "An error occurred.");
+      } else {
+        setError("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
