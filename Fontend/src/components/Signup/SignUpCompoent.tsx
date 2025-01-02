@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Input from "../Input";
+import Button from "../Button";
 
 type SignUpFormData ={
   email: string;
@@ -74,7 +75,7 @@ const SignUpForm = () => {
       </span>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-3 p-4"
+        className="flex flex-col gap-3"
       >
         <div className="relative flex items-center">
           <i className="bx bxs-lock-alt absolute left-1" />
@@ -143,13 +144,12 @@ const SignUpForm = () => {
           </p>
         )}
 
-        <button
+        <Button
+          state = {isSubmitting}
           type="submit"
-          className="bg-black text-white p-3 rounded-lg"
-          disabled={isSubmitting}
         >
           {isSubmitting ? "Loading..." : "SIGN UP"}
-        </button>
+        </Button>
       </form>
     </div>
   );

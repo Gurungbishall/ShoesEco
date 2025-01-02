@@ -11,7 +11,6 @@ type LoginFormInputs = {
 };
 
 export default function LoginComponent() {
-  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [visibility, setVisibility] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -20,14 +19,17 @@ export default function LoginComponent() {
     setVisibility(!visibility);
   };
 
+  const toggleToSignUp = () => {
+    navigate('/signup');
+  }
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormInputs>();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
-    setLoading(true);
     setError("");
 
     try {
@@ -47,9 +49,7 @@ export default function LoginComponent() {
       } else {
         setError("An unexpected error occurred.");
       }
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   return (
@@ -99,12 +99,16 @@ export default function LoginComponent() {
         {error && <div className="text-red-500">{error}</div>}
 
         <div>
-          <Button state={loading} type="submit">
-            {loading ? <i className="fa fa-spinner fa-spin mr-2"></i> : null}
-            {loading ? "Loading..." : "Sign in"}
+          <Button state={isSubmitting} type="submit"  >
+            {isSubmitting ? <i className="fa fa-spinner fa-spin mr-2"></i> : null}
+            {isSubmitting ? "Loading..." : "Sign in"}
           </Button>
         </div>
       </form>
+      <div className="flex gap-3 justify-center">
+        <span>Don't have an account?</span> 
+        <span className="font-bold" onClick={toggleToSignUp}>Sign up</span>
+      </div>
     </div>
   );
 }
