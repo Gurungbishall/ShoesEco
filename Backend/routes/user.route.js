@@ -1,17 +1,11 @@
 import express from "express";
-import cors from "cors";
 import userController from "../controllers/user.controller.js";
 
-const app = express();
+const router = express.Router();
 
-app.use(cors());
-app.use(express.json());
+router.get("/getProfile", userController.getProfile);
+router.post("/signin", userController.userlogin);
+router.post("/signup", userController.userSignUp);
+router.post("/editprofile", userController.editProfile);
 
-app.get("/getProfile", userController.getProfile);
-app.post("/signin", userController.userlogin);
-app.post("/signup", userController.userSignUp);
-app.post("/editprofile", userController.editProfile);
-
-app.listen(3000, () => {
-  console.log("Server has started on port 3000");
-});
+export default router;

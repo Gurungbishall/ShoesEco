@@ -26,7 +26,7 @@ export default function EditProfile() {
     }
 
     axios
-      .get(`http://localhost:3000/getProfile?customer_id=${customer_id}`)
+      .get(`http://localhost:3000/user/getProfile?customer_id=${customer_id}`)
       .then((response) => {
         const { full_name, email, phone_number } = response.data;
         setUserData({ full_name, email, phone_number });
@@ -53,7 +53,7 @@ export default function EditProfile() {
       const customer_id = sessionStorage.getItem("customer_id");
       if (!customer_id) return;
 
-      const response = await axios.post("http://localhost:3000/editprofile", {
+      const response = await axios.post("http://localhost:3000/user/editprofile", {
         ...data,
         customer_id,
       });

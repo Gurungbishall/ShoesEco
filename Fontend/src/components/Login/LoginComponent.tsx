@@ -33,7 +33,7 @@ export default function LoginComponent() {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:3000/signin", data);
+      const response = await axios.post("http://localhost:3000/user/signin", data);
 
       if (response.status === 200) {
         const customer_Name = response.data.name;
