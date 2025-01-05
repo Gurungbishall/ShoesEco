@@ -1,8 +1,8 @@
 import express from 'express';
-import { showAll } from "../controllers/shoes.controller.js";
+import { showShoes } from "../controllers/shoes.controller.js";
 
 const router = express.Router();
 
-router.get('/allShoes', showAll);
+router.get('/showshoes', showShoes);
 
 export default router;
