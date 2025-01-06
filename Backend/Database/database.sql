@@ -37,8 +37,10 @@ CREATE TABLE shoes (
     price DECIMAL(10,2) NOT NULL,
     stock_quantity INT DEFAULT 0,
     description TEXT, 
+    rating DECIMAL(3,2) CHECK (rating >= 0 AND rating <= 5), -- rating between 0 and 5
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Table for customers (assuming you want to track customers)
 CREATE TABLE customers (

@@ -7,6 +7,7 @@ import HomePage from "./pages/Home.tsx";
 import Editprofile from "./components/EditProfile/Editprofiel.tsx";
 import SpecialOffers from "./components/SpecialOffers/SpecialOffers.tsx";
 import Mostpopular from "./components/Mostpopular/Mostpopular.tsx";
+import Shoe from "./components/Shoe/Shoe.tsx";
 import App from "./App.tsx";
 import {
   createBrowserRouter,
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
       <Route path="/editprofile" element={<Editprofile />} />
       <Route path="/specialOffers" element={<SpecialOffers />} />
       <Route path="/mostpopular" element={<Mostpopular />} />
+      <Route path="/shoe" element={<Shoe />} />
     </>
   )
 );

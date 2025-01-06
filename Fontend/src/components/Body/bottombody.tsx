@@ -13,11 +13,12 @@ type Shoe = {
   price: string;
   size: string;
   stock_quantity: number;
+  rating: number;
 };
 
 export default function Bottombody() {
   const [shoes, setShoes] = useState<Shoe[]>([]);
-  const [brand_name, setBrand_name] = useState<string>("All"); // Set "All" as the default value
+  const [brand_name, setBrand_name] = useState<string>("All");
 
   const navigate = useNavigate();
   const handleSeeAll = () => {
@@ -26,6 +27,13 @@ export default function Bottombody() {
 
   const onClick = (name: string) => {
     setBrand_name(name);
+  };
+
+  // Navigate to shoe detail page when a shoe is clicked
+  const handleShoeClick = (shoeId: number) => {
+    navigate("/shoe", {
+      state: { shoeId }, // Pass the shoeId as state
+    });
   };
 
   function Button({
@@ -51,11 +59,11 @@ export default function Bottombody() {
     const fetchShoes = async () => {
       try {
         let url = "http://localhost:3000/shoes/showshoes";
-        
+
         if (brand_name && brand_name !== "All") {
-            url += `?brand_name=${brand_name}`;
+          url += `?brand_name=${brand_name}`;
         }
-        
+
         const res = await axios.get(url);
         setShoes(res.data.data);
       } catch (error) {
@@ -85,18 +93,24 @@ export default function Bottombody() {
         </div>
         <div className="grid grid-cols-2 gap-3">
           {shoes.map((shoe) => (
-            <div className="flex flex-col gap-2" key={shoe.shoe_id}>
+            <div
+              className="flex flex-col gap-2 cursor-pointer"
+              key={shoe.shoe_id}
+              onClick={() => handleShoeClick(shoe.shoe_id)} // Handle shoe click
+            >
               <img
                 src={adidas}
                 alt="Adidas Shoe"
                 className="bg-stone-300 rounded-xl"
               />
-              <span className="font-bold overflow-hidden text-ellipsis whitespace-nowrap">
+              <span className="font-bold text-xl overflow-hidden text-ellipsis whitespace-nowrap">
                 {shoe.model_name}
               </span>
-              <div className="flex justify-between">
-                <span className="text-xl font-bold">{shoe.price}</span>
-                <span className="text-xl font-bold">Size: {shoe.size}</span>
+              <div className="flex justify-between font-bold">
+                <span>
+                  <i className="bx bxs-star-half" /> {shoe.rating}
+                </span>
+                <span>$ {shoe.price}</span>
               </div>
             </div>
           ))}
