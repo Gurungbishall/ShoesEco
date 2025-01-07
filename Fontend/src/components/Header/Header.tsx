@@ -1,5 +1,4 @@
 import Search from "./Search";
-import CartBtn from "../Cart/CartBtn";
 import NotificationBtn from "../Notification/NotificationBtn";
 import { useNavigate } from "react-router-dom";
 export default function Header() {
@@ -22,7 +21,6 @@ export default function Header() {
           {customer_Name}
         </span>
         <div className="flex gap-2">
-          <CartBtn />
           <NotificationBtn />
         </div>
       </div>

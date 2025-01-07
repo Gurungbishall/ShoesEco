@@ -8,6 +8,7 @@ import Editprofile from "./components/EditProfile/Editprofiel.tsx";
 import SpecialOffers from "./components/SpecialOffers/SpecialOffers.tsx";
 import Mostpopular from "./components/Mostpopular/Mostpopular.tsx";
 import Shoe from "./components/Shoe/Shoe.tsx";
+import CartPage from "./pages/Cart.tsx";
 import App from "./App.tsx";
 import {
   createBrowserRouter,
@@ -27,6 +28,7 @@ const router = createBrowserRouter(
       <Route path="/specialOffers" element={<SpecialOffers />} />
       <Route path="/mostpopular" element={<Mostpopular />} />
       <Route path="/shoe" element={<Shoe />} />
+      <Route path="/cart" element={<CartPage />} />
     </>
   )
 );

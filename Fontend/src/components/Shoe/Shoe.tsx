@@ -16,12 +16,13 @@ type Shoe = {
 };
 
 export default function Shoe() {
-  const location = useLocation(); // Get location object
-  const shoeId = location.state?.shoeId; // Retrieve the shoeId from state
-
+  const location = useLocation();
+  const shoeId = location.state?.shoeId;
   const [shoe, setShoe] = useState<Shoe | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [count, setCount] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+
+  const customer_id = sessionStorage.getItem("customer_id");
 
   const navigate = useNavigate();
 
@@ -29,17 +30,23 @@ export default function Shoe() {
     navigate("/home");
   };
 
-  const increaseCount = () => {
-    setCount((prev) => prev + 1);
+  const increaseQuantity = () => {
+    if (shoe && quantity < shoe.stock_quantity) {
+      setQuantity((prev) => prev + 1);
+    } else if (!shoe) {
+      alert("Shoe data is not available.");
+    } else {
+      alert("Not enough stock available!");
+    }
   };
 
-  const decreaseCount = () => {
-    if (count <= 0) return;
-    setCount((prev) => prev - 1);
+  const decreaseQuantity = () => {
+    if (quantity <= 0) return;
+    setQuantity((prev) => prev - 1);
   };
 
   useEffect(() => {
-    if (!shoeId) return; // If no shoeId is found, don't fetch
+    if (!shoeId) return;
 
     axios
       .get(`http://localhost:3000/shoes/shoe?shoe_id=${shoeId}`)
@@ -57,6 +64,22 @@ export default function Shoe() {
 
   if (!shoe) return <div>No shoe found</div>;
 
+  const addShoeToCart = async () => {
+    try {
+      const response = await axios.post("http://localhost:3000/shoes/addshoe", {
+        customer_id: customer_id,
+        shoe_id: shoeId,
+        quantity: quantity,
+      });
+
+      console.log("Response:", response.data);
+      alert(response.data.message);
+    } catch (error) {
+      console.error("Error adding shoe to cart:", error);
+      alert("Failed to add shoe to cart.");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-3">
       <i
@@ -71,24 +94,34 @@ export default function Shoe() {
             <i className="bx bxs-star-half" /> {shoe.rating}
           </span>
         </div>
+
         <div className="py-3 flex flex-col gap-4 ">
           <span className="text-xl font-bold">Description</span>
           <span>{shoe.description}</span>
         </div>
-        <div className="py-3 flex gap-4 ">
+
+        <div className="py-3 flex gap-4">
+          <span className="text-xl font-bold">Size: {shoe.size}</span>
+        </div>
+
+        <div className="py-3 flex gap-4">
           <span className="text-xl font-bold">Quantity</span>
           <span className="px-2 h-10 flex gap-4 items-center justify-center text-xl rounded-2xl bg-stone-300">
-            <i className="bx bx-plus bx-sm" onClick={increaseCount} />
-            {count}
-            <i className="bx bx-minus bx-sm" onClick={decreaseCount} />
+            <i className="bx bx-plus bx-sm" onClick={increaseQuantity} />
+            {quantity}
+            <i className="bx bx-minus bx-sm" onClick={decreaseQuantity} />
           </span>
         </div>
+
         <div className="py-3 flex items-center justify-between">
           <div className="flex flex-col gap-2 ">
             <span>Total Prices</span>
             <span className="text-xl font-bold">$ {shoe.price}</span>
           </div>
-          <div className="h-16 w-1/2 flex items-center justify-center gap-4 bg-black text-white font-bold rounded-2xl">
+          <div
+            className="h-16 w-1/2 flex items-center justify-center gap-4 bg-black text-white font-bold rounded-2xl cursor-pointer"
+            onClick={addShoeToCart}
+          >
             <i className="bx bx-cart bx-sm" />
             Add to Cart
           </div>

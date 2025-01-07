@@ -29,10 +29,10 @@ export default function Bottombody() {
     setBrand_name(name);
   };
 
-  // Navigate to shoe detail page when a shoe is clicked
+  
   const handleShoeClick = (shoeId: number) => {
     navigate("/shoe", {
-      state: { shoeId }, // Pass the shoeId as state
+      state: { shoeId }, 
     });
   };
 
@@ -96,7 +96,7 @@ export default function Bottombody() {
             <div
               className="flex flex-col gap-2 cursor-pointer"
               key={shoe.shoe_id}
-              onClick={() => handleShoeClick(shoe.shoe_id)} // Handle shoe click
+              onClick={() => handleShoeClick(shoe.shoe_id)} 
             >
               <img
                 src={adidas}
