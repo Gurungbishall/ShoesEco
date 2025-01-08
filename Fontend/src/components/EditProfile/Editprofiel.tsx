@@ -19,7 +19,6 @@ export default function EditProfile() {
 
   useEffect(() => {
     const customer_id = sessionStorage.getItem("customer_id");
-    console.log(customer_id);
     if (!customer_id) {
       navigate("/login");
       return;
@@ -53,15 +52,18 @@ export default function EditProfile() {
       const customer_id = sessionStorage.getItem("customer_id");
       if (!customer_id) return;
 
-      const response = await axios.post("http://localhost:3000/user/editprofile", {
-        ...data,
-        customer_id,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/user/editprofile",
+        {
+          ...data,
+          customer_id,
+        }
+      );
 
       if (response.status === 200) {
         const customer_Name = response.data.user.full_name;
         sessionStorage.removeItem("customer_name");
-         sessionStorage.setItem("customer_name", customer_Name);
+        sessionStorage.setItem("customer_name", customer_Name);
         navigate("/editprofile");
       }
     } catch (error: unknown) {
