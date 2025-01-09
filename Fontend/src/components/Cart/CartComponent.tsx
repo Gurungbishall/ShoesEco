@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import adidas from "../../pictures/AdidasResponseCLCrystalWhite.png";
+import Navbar from "../Navbar/Navbar";
+import DeleteItem from "./DeleteCartComponent";
 
 type CartItem = {
   cart_item_id: number;
@@ -21,6 +23,29 @@ type CartResponse = {
 export default function CartComponent() {
   const [shoes, setShoes] = useState<CartItem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [quantities, setQuantities] = useState<Record<number, number>>({});
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [selectedShoe, setSelectedShoe] = useState<CartItem | null>(null);
+
+  const increaseQuantity = (cart_item_id: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [cart_item_id]: (prev[cart_item_id] || 0) + 1,
+    }));
+  };
+
+  const decreaseQuantity = (cart_item_id: number) => {
+    setQuantities((prev) => {
+      const currentQuantity = prev[cart_item_id] || 0;
+      if (currentQuantity > 1) {
+        return {
+          ...prev,
+          [cart_item_id]: currentQuantity - 1,
+        };
+      }
+      return prev;
+    });
+  };
 
   const fetchCartData = async () => {
     const customer_id = sessionStorage.getItem("customer_id");
@@ -36,6 +61,13 @@ export default function CartComponent() {
       );
       const fetchedItems = response.data.items;
       setShoes(fetchedItems);
+
+      const initialQuantities = fetchedItems.reduce((acc, shoe) => {
+        acc[shoe.cart_item_id] = shoe.quantity;
+        return acc;
+      }, {} as Record<number, number>);
+
+      setQuantities(initialQuantities);
     } catch (error: any) {
       if (error.response && error.response.status === 404) {
         setError(error.response.data.message);
@@ -48,6 +80,15 @@ export default function CartComponent() {
   useEffect(() => {
     fetchCartData();
   }, []);
+
+  const loadingDeleteMenu = (shoe: CartItem) => {
+    setSelectedShoe(shoe);
+    setLoadingDelete(true);
+  };
+
+  const closingDeleteMenu = () => {
+    setLoadingDelete(false); // This will hide the delete confirmation modal
+  };
 
   const deleteCartItem = async (cart_item_id: number) => {
     try {
@@ -65,6 +106,14 @@ export default function CartComponent() {
       setShoes((prevItems) =>
         prevItems.filter((item) => item.cart_item_id !== cart_item_id)
       );
+
+      setQuantities((prevQuantities) => {
+        const { [cart_item_id]: _, ...rest } = prevQuantities;
+        return rest;
+      });
+
+      setLoadingDelete(false);
+
       if (shoes.length === 1) {
         setError("Cart is empty");
       }
@@ -76,45 +125,76 @@ export default function CartComponent() {
   };
 
   return (
-    <div className="p-6 flex flex-col gap-3">
-      <div>
-        <span className="text-2xl font-bold">My Cart</span>
+    <>
+      <div className="p-6 flex flex-col gap-3">
+        <div>
+          <span className="text-2xl font-bold">My Cart</span>
+        </div>
+
+        {error && (
+          <div className="bg-red-500 text-white p-4 rounded-md mb-4">
+            <span>{error}</span>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-3">
+          {shoes.map((shoe) => (
+            <div
+              key={shoe.cart_item_id}
+              className="flex gap-4 bg-slate-100 rounded-3xl relative"
+            >
+              <img
+                src={adidas}
+                alt="adidas"
+                className="size-32 bg-slate-200 rounded-lg"
+              />
+
+              <div className="w-full p-2 flex flex-col gap-3">
+                <div className="flex text-xl font-bold">
+                  <span className="overflow-hidden whitespace-nowrap text-ellipsis max-w-[150px]">
+                    {shoe.model_name}
+                  </span>
+                  <i
+                    className="bx bx-x bx-sm absolute right-2 top-2 cursor-pointer"
+                    onClick={() => loadingDeleteMenu(shoe)}
+                  />
+                </div>
+                <div className="flex gap-2 text-zinc-600">
+                  <span>Color = {shoe.color}</span>|
+                  <span>Size = {shoe.size}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xl font-bold">${shoe.price}</span>
+                  <span className="px-1 h-10 flex gap-2 items-center justify-center text-lg rounded-2xl bg-stone-300">
+                    <i
+                      className="bx bx-minus bx-xs"
+                      onClick={() => decreaseQuantity(shoe.cart_item_id)}
+                    />
+                    {quantities[shoe.cart_item_id] || shoe.quantity}
+                    <i
+                      className="bx bx-plus bx-xs"
+                      onClick={() => increaseQuantity(shoe.cart_item_id)}
+                    />
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {error && (
-        <div className="bg-red-500 text-white p-4 rounded-md mb-4">
-          <span>{error}</span>
+      {loadingDelete && selectedShoe && (
+        <div className="fixed inset-0 flex flex-col w-full bg-black bg-opacity-50">
+          <div className="h-1/2" />
+          <DeleteItem
+            deleteCartItem={deleteCartItem}
+            shoe={selectedShoe}
+            closeMenu={closingDeleteMenu} 
+          />
         </div>
       )}
 
-      <div className="flex flex-col gap-3">
-        {shoes.map((shoe) => (
-          <div
-            key={shoe.cart_item_id}
-            className="p-4 flex gap-4 bg-slate-100 rounded-3xl relative"
-          >
-            <img
-              src={adidas}
-              alt="adidas"
-              className="size-32 bg-slate-200 rounded-lg"
-            />
-            <div>
-              <div className="flex text-xl font-bold">
-                <span className="overflow-hidden whitespace-nowrap text-ellipsis max-w-[150px]">
-                  {shoe.model_name}
-                </span>
-                <i
-                  className="bx bx-x bx-sm absolute right-2 top-4 cursor-pointer"
-                  onClick={() => deleteCartItem(shoe.cart_item_id)}
-                />
-              </div>
-
-              <p>Quantity: {shoe.quantity}</p>
-              <p>Price: ${shoe.price}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+      {!loadingDelete && <Navbar />}
+    </>
   );
 }
