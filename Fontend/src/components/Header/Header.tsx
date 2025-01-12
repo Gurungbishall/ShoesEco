@@ -1,4 +1,4 @@
-import Search from "./Search";
+import Search from "../Search/Search";
 import NotificationBtn from "../Notification/NotificationBtn";
 export default function Header() {
   let customer_Name = sessionStorage.getItem("customer_name");
