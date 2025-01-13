@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import adidas from "../../pictures/AdidasResponseCLCrystalWhite.png";
+import { SearchContext } from "../../pages/Home";
 
 type searchShoe = {
   shoe_id: number;
@@ -19,8 +20,15 @@ type searchShoe = {
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<searchShoe[]>([]);
-  const [isFocused, setIsFocused] = useState<boolean>(false); 
+  const [isFocused, setIsFocused] = useState<boolean>(false);
   const navigate = useNavigate();
+  const context = useContext(SearchContext);
+  if (!context) {
+    throw new Error(
+      "SearchContext is not available. Make sure you're using it within the SearchContext.Provider."
+    );
+  }
+  const { setSearchFocus } = context;
 
   const handleShoeClick = (shoeId: number) => {
     navigate("/shoe", {
@@ -28,20 +36,14 @@ export default function Search() {
     });
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    if (query === "") {
-      setSearchResults([]);
-    }
-  };
-
   const handleFocus = () => {
+    setSearchFocus(true);
     setIsFocused(true);
   };
 
   const handleBlur = () => {
     setIsFocused(false);
+    setSearchFocus(false);
   };
 
   useEffect(() => {
@@ -71,10 +73,11 @@ export default function Search() {
           <input
             type="text"
             placeholder="Search"
+            value={searchQuery}
             className="w-full pl-9 py-2 text-lg border-2 rounded-xl outline-none"
-            onChange={handleSearchChange}
-            onFocus={handleFocus} 
-            onBlur={handleBlur} 
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           />
           <i className="bx bx-slider-alt bx-sm absolute right-0 pr-2"></i>
         </div>
