@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import adidas from "../../pictures/AdidasResponseCLCrystalWhite.png";
 import Navbar from "../Navbar/Navbar";
-import DeleteItem from "./DeleteCartComponent";
+// import DeleteItem from "../Cart/DeleteCartComponent";
 
-type CartItem = {
+type OrderItem = {
   cart_item_id: number;
   color: string;
   description: string;
@@ -16,18 +15,17 @@ type CartItem = {
   size: string;
 };
 
-type CartResponse = {
+type OrderResponse = {
   cart_id: number;
-  items: CartItem[];
+  items: OrderItem[];
 };
 
-export default function CartComponent() {
-  const [shoes, setShoes] = useState<CartItem[]>([]);
+export default function OrderComponent() {
+  const [shoes, setShoes] = useState<OrderItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const [selectedShoe, setSelectedShoe] = useState<CartItem | null>(null);
-  const navigate = useNavigate();
+  const [selectedShoe, setSelectedShoe] = useState<OrderItem | null>(null);
 
   const increaseQuantity = (cart_item_id: number) => {
     setQuantities((prev) => ({
@@ -58,7 +56,7 @@ export default function CartComponent() {
     }
 
     try {
-      const response = await axios.get<CartResponse>(
+      const response = await axios.get<OrderResponse>(
         `http://localhost:3000/user/showcart?customer_id=${customer_id}`
       );
       const fetchedItems = response.data.items;
@@ -83,13 +81,7 @@ export default function CartComponent() {
     fetchCartData();
   }, []);
 
-  const handleShoeClick = (shoeId: number) => {
-    navigate("/shoe", {
-      state: { shoeId, from: location.pathname },
-    });
-  };
-
-  const loadingDeleteMenu = (shoe: CartItem) => {
+  const loadingDeleteMenu = (shoe: OrderItem) => {
     setSelectedShoe(shoe);
     setLoadingDelete(true);
   };
@@ -98,7 +90,7 @@ export default function CartComponent() {
     setLoadingDelete(false);
   };
 
-  const deleteCartItem = async (cart_item_id: number) => {
+  const deleteOrderItem = async (cart_item_id: number) => {
     try {
       const customer_id = sessionStorage.getItem("customer_id");
 
@@ -107,7 +99,7 @@ export default function CartComponent() {
         return;
       }
 
-      await axios.post("http://localhost:3000/user/deletecartitem", {
+      await axios.post("http://localhost:3000/user/deleteOrderItem", {
         cart_item_id: cart_item_id,
       });
 
@@ -150,7 +142,6 @@ export default function CartComponent() {
             <div
               key={shoe.cart_item_id}
               className="flex gap-4 bg-slate-100 rounded-3xl relative"
-              onClick={() => handleShoeClick(shoe.shoe_id)}
             >
               <img
                 src={adidas}
@@ -195,11 +186,11 @@ export default function CartComponent() {
       {loadingDelete && selectedShoe && (
         <div className="fixed inset-0 flex flex-col w-full bg-black bg-opacity-50">
           <div className="h-1/2" />
-          <DeleteItem
-            deleteCartItem={deleteCartItem}
+          {/* <DeleteItem
+            deleteOrderItem={deleteOrderItem}
             shoe={selectedShoe}
             closeMenu={closingDeleteMenu}
-          />
+          /> */}
         </div>
       )}
 

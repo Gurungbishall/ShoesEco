@@ -39,9 +39,10 @@ export default function Bottombody() {
 
   const handleShoeClick = (shoeId: number) => {
     navigate("/shoe", {
-      state: { shoeId },
+      state: { shoeId, from: location.pathname },  
     });
   };
+
 
   function Button({
     name,

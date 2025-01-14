@@ -18,6 +18,7 @@ type Shoe = {
 export default function Shoe() {
   const location = useLocation();
   const shoeId = location.state?.shoeId;
+  const previousRoute = location.state?.from;
   const [shoe, setShoe] = useState<Shoe | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [quantity, setQuantity] = useState(1);
@@ -27,7 +28,7 @@ export default function Shoe() {
   const navigate = useNavigate();
 
   const toggleHome = () => {
-    navigate("/home");
+    navigate(previousRoute);
   };
 
   const increaseQuantity = () => {

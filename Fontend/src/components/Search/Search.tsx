@@ -56,7 +56,6 @@ export default function Search() {
         );
 
         setSearchResults(response.data.data);
-        console.log(response.data.data);
       } catch (error) {
         console.error("Error fetching search results:", error);
       }
