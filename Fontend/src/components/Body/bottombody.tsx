@@ -39,10 +39,9 @@ export default function Bottombody() {
 
   const handleShoeClick = (shoeId: number) => {
     navigate("/shoe", {
-      state: { shoeId, from: location.pathname },  
+      state: { shoeId, from: location.pathname },
     });
   };
-
 
   function Button({
     name,
@@ -84,48 +83,48 @@ export default function Bottombody() {
 
   return (
     <>
-     {!searchfocus?(
-       <div className="flex flex-col gap-2">
-       <div className="flex justify-between font-bold">
-         <span className="text-xl">Most Popular</span>
-         <span className="cursor-pointer" onClick={handleSeeAll}>
-           See all
-         </span>
-       </div>
-       <div className="flex gap-2 overflow-x-auto">
-         <Button name="All" onClick={onClick} />
-         <Button name="Nike" onClick={onClick} />
-         <Button name="Adidas" onClick={onClick} />
-         <Button name="Puma" onClick={onClick} />
-         <Button name="Reebok" onClick={onClick} />
-         <Button name="New Balance" onClick={onClick} />
-       </div>
-       <div className="grid grid-cols-2 gap-3">
-         {shoes.map((shoe) => (
-           <div
-             className="flex flex-col gap-2 cursor-pointer"
-             key={shoe.shoe_id}
-             onClick={() => handleShoeClick(shoe.shoe_id)}
-           >
-             <img
-               src={adidas}
-               alt="Adidas Shoe"
-               className="bg-stone-300 rounded-xl"
-             />
-             <span className="font-bold text-xl overflow-hidden text-ellipsis whitespace-nowrap">
-               {shoe.model_name}
-             </span>
-             <div className="flex justify-between font-bold">
-               <span>
-                 <i className="bx bxs-star-half" /> {shoe.rating}
-               </span>
-               <span>$ {shoe.price}</span>
-             </div>
-           </div>
-         ))}
-       </div>
-     </div>
-     ):null}
+      {!searchfocus ? (
+        <div className="flex flex-col gap-2 pb-20">
+          <div className="flex justify-between font-bold">
+            <span className="text-xl">Most Popular</span>
+            <span className="cursor-pointer" onClick={handleSeeAll}>
+              See all
+            </span>
+          </div>
+          <div className="flex gap-2 overflow-x-auto">
+            <Button name="All" onClick={onClick} />
+            <Button name="Nike" onClick={onClick} />
+            <Button name="Adidas" onClick={onClick} />
+            <Button name="Puma" onClick={onClick} />
+            <Button name="Reebok" onClick={onClick} />
+            <Button name="New Balance" onClick={onClick} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {shoes.map((shoe) => (
+              <div
+                className="flex flex-col gap-2 cursor-pointer"
+                key={shoe.shoe_id}
+                onClick={() => handleShoeClick(shoe.shoe_id)}
+              >
+                <img
+                  src={adidas}
+                  alt="Adidas Shoe"
+                  className="bg-stone-300 rounded-xl"
+                />
+                <span className="font-bold text-xl overflow-hidden text-ellipsis whitespace-nowrap">
+                  {shoe.model_name}
+                </span>
+                <div className="flex justify-between font-bold">
+                  <span>
+                    <i className="bx bxs-star-half" /> {shoe.rating}
+                  </span>
+                  <span>$ {shoe.price}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

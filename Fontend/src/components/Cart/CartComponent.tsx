@@ -88,6 +88,10 @@ export default function CartComponent() {
       state: { shoeId, from: location.pathname },
     });
   };
+  
+  const checkout = () => {
+    navigate("/checkout");
+  }
 
   const loadingDeleteMenu = (shoe: CartItem) => {
     setSelectedShoe(shoe);
@@ -134,9 +138,9 @@ export default function CartComponent() {
 
   return (
     <>
-      <div className="p-6 flex flex-col gap-3">
+      <div className="p-6 flex flex-col gap-3 p">
         <div>
-          <span className="text-2xl font-bold">My Cart</span>
+          <span className="text-2xl font-bold" onClick={checkout}>My Cart</span>
         </div>
 
         {error && (
@@ -145,7 +149,7 @@ export default function CartComponent() {
           </div>
         )}
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 pb-20">
           {shoes.map((shoe) => (
             <div
               key={shoe.cart_item_id}
@@ -165,7 +169,10 @@ export default function CartComponent() {
                   </span>
                   <i
                     className="bx bx-x bx-sm absolute right-2 top-2 cursor-pointer"
-                    onClick={() => loadingDeleteMenu(shoe)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      loadingDeleteMenu(shoe);
+                    }}
                   />
                 </div>
                 <div className="flex gap-2 text-zinc-600">
@@ -177,12 +184,18 @@ export default function CartComponent() {
                   <span className="px-1 h-10 flex gap-2 items-center justify-center text-lg rounded-2xl bg-stone-300">
                     <i
                       className="bx bx-minus bx-xs"
-                      onClick={() => decreaseQuantity(shoe.cart_item_id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        decreaseQuantity(shoe.cart_item_id);
+                      }}
                     />
                     {quantities[shoe.cart_item_id] || shoe.quantity}
                     <i
                       className="bx bx-plus bx-xs"
-                      onClick={() => increaseQuantity(shoe.cart_item_id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        increaseQuantity(shoe.cart_item_id);
+                      }}
                     />
                   </span>
                 </div>
