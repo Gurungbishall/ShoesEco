@@ -89,7 +89,7 @@ export default function CheckOutComponent() {
         }
       );
 
-      navigate("/order-confirmation", {
+      navigate("/order", {
         state: { orderId: response.data.order_id },
       });
     } catch (error) {

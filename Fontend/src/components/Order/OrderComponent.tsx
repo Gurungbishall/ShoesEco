@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import adidas from "../../pictures/AdidasResponseCLCrystalWhite.png";
-import Navbar from "../Navbar/Navbar";
-// import DeleteItem from "../Cart/DeleteCartComponent";
 
-type OrderItem = {
-  cart_item_id: number;
+type PendingOrderItem = {
+  order_item_id: number;
   color: string;
-  description: string;
   model_name: string;
   price: string;
   quantity: number;
@@ -15,39 +13,17 @@ type OrderItem = {
   size: string;
 };
 
-type OrderResponse = {
+type PendingOrderResponse = {
   cart_id: number;
-  items: OrderItem[];
+  items: PendingOrderItem[];
 };
 
 export default function OrderComponent() {
-  const [shoes, setShoes] = useState<OrderItem[]>([]);
+  const [shoes, setShoes] = useState<PendingOrderItem[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [quantities, setQuantities] = useState<Record<number, number>>({});
-  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const [selectedShoe, setSelectedShoe] = useState<OrderItem | null>(null);
+  const navigate = useNavigate();
 
-  const increaseQuantity = (cart_item_id: number) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [cart_item_id]: (prev[cart_item_id] || 0) + 1,
-    }));
-  };
-
-  const decreaseQuantity = (cart_item_id: number) => {
-    setQuantities((prev) => {
-      const currentQuantity = prev[cart_item_id] || 0;
-      if (currentQuantity > 1) {
-        return {
-          ...prev,
-          [cart_item_id]: currentQuantity - 1,
-        };
-      }
-      return prev;
-    });
-  };
-
-  const fetchCartData = async () => {
+  const fetchPendingOrderData = async () => {
     const customer_id = sessionStorage.getItem("customer_id");
 
     if (!customer_id) {
@@ -56,18 +32,11 @@ export default function OrderComponent() {
     }
 
     try {
-      const response = await axios.get<OrderResponse>(
-        `http://localhost:3000/user/showcart?customer_id=${customer_id}`
+      const response = await axios.get<PendingOrderResponse>(
+        `http://localhost:3000/user/pendingorder?customer_id=${customer_id}`
       );
       const fetchedItems = response.data.items;
       setShoes(fetchedItems);
-
-      const initialQuantities = fetchedItems.reduce((acc, shoe) => {
-        acc[shoe.cart_item_id] = shoe.quantity;
-        return acc;
-      }, {} as Record<number, number>);
-
-      setQuantities(initialQuantities);
     } catch (error: any) {
       if (error.response && error.response.status === 404) {
         setError(error.response.data.message);
@@ -78,57 +47,20 @@ export default function OrderComponent() {
   };
 
   useEffect(() => {
-    fetchCartData();
+    fetchPendingOrderData();
   }, []);
 
-  const loadingDeleteMenu = (shoe: OrderItem) => {
-    setSelectedShoe(shoe);
-    setLoadingDelete(true);
-  };
-
-  const closingDeleteMenu = () => {
-    setLoadingDelete(false);
-  };
-
-  const deleteOrderItem = async (cart_item_id: number) => {
-    try {
-      const customer_id = sessionStorage.getItem("customer_id");
-
-      if (!customer_id) {
-        setError("Customer ID is missing. Please log in.");
-        return;
-      }
-
-      await axios.post("http://localhost:3000/user/deleteOrderItem", {
-        cart_item_id: cart_item_id,
-      });
-
-      setShoes((prevItems) =>
-        prevItems.filter((item) => item.cart_item_id !== cart_item_id)
-      );
-
-      setQuantities((prevQuantities) => {
-        const { [cart_item_id]: _, ...rest } = prevQuantities;
-        return rest;
-      });
-
-      setLoadingDelete(false);
-
-      if (shoes.length === 1) {
-        setError("Cart is empty");
-      }
-      console.log("Item deleted successfully.");
-    } catch (error) {
-      console.error("Error deleting item:", error);
-      setError("Error deleting item from the cart.");
-    }
+  const handleShoeClick = (shoeId: number) => {
+    navigate("/shoe", {
+      state: { shoeId, from: location.pathname },
+    });
   };
 
   return (
     <>
-      <div className="p-6 flex flex-col gap-3">
+      <div className="p-6 flex flex-col gap-3 ">
         <div>
-          <span className="text-2xl font-bold">My Cart</span>
+          <span className="text-2xl font-bold">My Order</span>
         </div>
 
         {error && (
@@ -136,12 +68,20 @@ export default function OrderComponent() {
             <span>{error}</span>
           </div>
         )}
-
-        <div className="flex flex-col gap-3">
+        <div className="w-full mt-4 flex ">
+          <span className="w-1/2 pb-3 text-center text-xl font-bold border-b-2">
+            Active
+          </span>
+          <span className="w-1/2 pb-3 text-center text-xl font-bold border-b-2">
+            Completed
+          </span>
+        </div>
+        <div className="flex flex-col gap-3 pb-20">
           {shoes.map((shoe) => (
             <div
-              key={shoe.cart_item_id}
+              key={shoe.order_item_id}
               className="flex gap-4 bg-slate-100 rounded-3xl relative"
+              onClick={() => handleShoeClick(shoe.shoe_id)}
             >
               <img
                 src={adidas}
@@ -154,10 +94,6 @@ export default function OrderComponent() {
                   <span className="overflow-hidden whitespace-nowrap text-ellipsis max-w-[150px]">
                     {shoe.model_name}
                   </span>
-                  <i
-                    className="bx bx-x bx-sm absolute right-2 top-2 cursor-pointer"
-                    onClick={() => loadingDeleteMenu(shoe)}
-                  />
                 </div>
                 <div className="flex gap-2 text-zinc-600">
                   <span>Color = {shoe.color}</span>|
@@ -165,36 +101,13 @@ export default function OrderComponent() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xl font-bold">${shoe.price}</span>
-                  <span className="px-1 h-10 flex gap-2 items-center justify-center text-lg rounded-2xl bg-stone-300">
-                    <i
-                      className="bx bx-minus bx-xs"
-                      onClick={() => decreaseQuantity(shoe.cart_item_id)}
-                    />
-                    {quantities[shoe.cart_item_id] || shoe.quantity}
-                    <i
-                      className="bx bx-plus bx-xs"
-                      onClick={() => increaseQuantity(shoe.cart_item_id)}
-                    />
-                  </span>
+                  <span className="text-zinc-600">Qty = {shoe.quantity}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-
-      {loadingDelete && selectedShoe && (
-        <div className="fixed inset-0 flex flex-col w-full bg-black bg-opacity-50">
-          <div className="h-1/2" />
-          {/* <DeleteItem
-            deleteOrderItem={deleteOrderItem}
-            shoe={selectedShoe}
-            closeMenu={closingDeleteMenu}
-          /> */}
-        </div>
-      )}
-
-      {!loadingDelete && <Navbar />}
     </>
   );
 }

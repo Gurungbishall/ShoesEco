@@ -256,5 +256,49 @@ const orderShoes =async (req, res) => {
   }
 };
 
+  const showPendingOrder = async (req, res) => {
+    const {customer_id}= req.query;
 
-export default { userlogin, userSignUp, getProfile, editProfile, showCart, deleteCartItem, orderShoes };
+    if(!customer_id)
+      return res.status(400).json({message: 'Error'})
+
+    try {
+      let result = await pool.query(
+        'SELECT order_id FROM orders WHERE customer_id = $1 AND status = $2',
+        [customer_id, "Pending"]
+      );
+      
+      let order_id;
+      
+      if(result.rows.length > 0){
+        order_id = result.rows[0].order_id;
+      }else{
+        return res.status(404).json({message: "No Order"});
+      } 
+      
+      result = await pool.query(
+        `SELECT oi.order_item_id, oi.quantity, oi.price, s.shoe_id, s.model_name, s.color, s.size
+         FROM order_items oi
+         JOIN shoes s ON oi.shoe_id = s.shoe_id
+         WHERE oi.order_id = $1`,
+         [order_id]
+      )
+
+      if(result.rows.length === 0){
+        return res.status(404).json({message: "No Pending order."});
+      }
+
+      return res.status(200).json({
+        order_id,
+        items: result.rows
+      })
+
+    }catch (error) {
+      console.error("Error fetching cart:", error);
+      return res.status(500).json({ message: "Internal server error." });
+    }
+  };
+
+
+
+export default { userlogin, userSignUp, getProfile, editProfile, showCart, deleteCartItem, orderShoes,showPendingOrder };

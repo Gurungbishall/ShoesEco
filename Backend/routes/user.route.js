@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get("/getProfile", userController.getProfile);
 router.get("/showcart", userController.showCart);
+router.get("/pendingorder", userController.showPendingOrder);
 
 router.post("/signin", userController.userlogin);
 router.post("/signup", userController.userSignUp);
