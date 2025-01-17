@@ -11,7 +11,6 @@ import Shoe from "./components/Shoe/Shoe.tsx";
 import CartPage from "./pages/Cart.tsx";
 import CheckOut from "./pages/CheckOut.tsx";
 import OrderPage from "./pages/Order.tsx";
-import App from "./App.tsx";
 import {
   createBrowserRouter,
   Route,
@@ -22,10 +21,9 @@ import {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<App />} />
       <Route path="/signin" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/home" element={<HomePage />} />
+      <Route path="/" element={<HomePage />} />
       <Route path="/editprofile" element={<Editprofile />} />
       <Route path="/specialOffers" element={<SpecialOffers />} />
       <Route path="/mostpopular" element={<Mostpopular />} />

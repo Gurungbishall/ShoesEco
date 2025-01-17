@@ -7,7 +7,7 @@ export default function Navbar() {
       <div
         className="flex flex-col items-center justify-center"
         onClick={() => {
-          navigate("/home");
+          navigate("/");
         }}
       >
         <i className="bx bxs-home bx-sm" />

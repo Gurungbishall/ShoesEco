@@ -37,7 +37,7 @@ export default function EditProfile() {
   }, [navigate]);
 
   const toggleHome = () => {
-    navigate("/home");
+    navigate("/");
   };
 
   const {
