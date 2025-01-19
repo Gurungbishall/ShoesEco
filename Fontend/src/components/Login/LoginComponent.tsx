@@ -20,8 +20,8 @@ export default function LoginComponent() {
   };
 
   const toggleToSignUp = () => {
-    navigate('/signup');
-  }
+    navigate("/signup");
+  };
 
   const {
     register,
@@ -33,7 +33,10 @@ export default function LoginComponent() {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:3000/user/signin", data);
+      const response = await axios.post(
+        "http://localhost:3000/user/signin",
+        data
+      );
 
       if (response.status === 200) {
         const customer_Name = response.data.name;
@@ -41,7 +44,7 @@ export default function LoginComponent() {
         sessionStorage.setItem("customer_name", customer_Name);
         sessionStorage.setItem("customer_id", customer_ID);
 
-        navigate("/home");
+        navigate("/");
       }
     } catch (error: any) {
       if (error.response) {
@@ -49,7 +52,7 @@ export default function LoginComponent() {
       } else {
         setError("An unexpected error occurred.");
       }
-    } 
+    }
   };
 
   return (
@@ -99,15 +102,19 @@ export default function LoginComponent() {
         {error && <div className="text-red-500">{error}</div>}
 
         <div>
-          <Button state={isSubmitting} type="submit"  >
-            {isSubmitting ? <i className="fa fa-spinner fa-spin mr-2"></i> : null}
+          <Button state={isSubmitting} type="submit">
+            {isSubmitting ? (
+              <i className="fa fa-spinner fa-spin mr-2"></i>
+            ) : null}
             {isSubmitting ? "Loading..." : "Sign in"}
           </Button>
         </div>
       </form>
       <div className="flex gap-3 justify-center">
-        <span>Don't have an account?</span> 
-        <span className="font-bold" onClick={toggleToSignUp}>Sign up</span>
+        <span>Don't have an account?</span>
+        <span className="font-bold" onClick={toggleToSignUp}>
+          Sign up
+        </span>
       </div>
     </div>
   );

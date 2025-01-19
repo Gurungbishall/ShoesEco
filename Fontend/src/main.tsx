@@ -2,15 +2,15 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import LoginPage from "./pages/Login.tsx";
-import SignUpPage from "./pages/SignUp.tsx";
-import HomePage from "./pages/Home.tsx";
-import Editprofile from "./components/EditProfile/Editprofiel.tsx";
-import SpecialOffers from "./components/SpecialOffers/SpecialOffers.tsx";
-import Mostpopular from "./components/Mostpopular/Mostpopular.tsx";
-import Shoe from "./components/Shoe/Shoe.tsx";
-import CartPage from "./pages/Cart.tsx";
-import CheckOut from "./pages/CheckOut.tsx";
-import OrderPage from "./pages/Order.tsx";
+import SignUpPage from "./pages/customerPages/SignUp.tsx";
+import HomePage from "./pages/customerPages/Home.tsx";
+import Editprofile from "./components/customerComponents/EditProfile/Editprofiel.tsx";
+import SpecialOffers from "./components/customerComponents/SpecialOffers/SpecialOffers.tsx";
+import Mostpopular from "./components/customerComponents/Mostpopular/Mostpopular.tsx";
+import Shoe from "./components/customerComponents/Shoe/Shoe.tsx";
+import CartPage from "./pages/customerPages/Cart.tsx";
+import CheckOut from "./pages/customerPages/CheckOut.tsx";
+import OrderPage from "./pages/customerPages/Order.tsx";
 import {
   createBrowserRouter,
   Route,

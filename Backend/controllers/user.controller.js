@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import pool from "../Database/db.js";
+import jwt from 'jsonwebtoken';
 
 const userlogin = async (req, res) => {
   const { email, password } = req.body;
@@ -10,13 +11,12 @@ const userlogin = async (req, res) => {
 
   try {
     const query =
-      "SELECT customer_id, full_name, password FROM customers WHERE email = $1";
+      "SELECT customer_id, full_name, password, is_admin FROM customers WHERE email = $1";
     const { rows } = await pool.query(query, [email]);
 
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
-
     const user = rows[0];
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -24,10 +24,15 @@ const userlogin = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
+    
+    const accessToken = jwt.sign({id: user.customer_id, isAdmin: user.is_admin}, "MySecretKey");
+
     res.status(200).json({
       message: "Login successful",
       name: user.full_name,
       user_id: user.customer_id,
+      is_admin: user.is_admin,
+      accessToken,
     });
   } catch (error) {
     console.error(error);
