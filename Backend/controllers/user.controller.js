@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt";
 import pool from "../Database/db.js";
-import jwt from 'jsonwebtoken';
+import { generateAccessToken, generateRefreshToken } from "../model/user.model.js";
+
+
+
+
 
 const userlogin = async (req, res) => {
   const { email, password } = req.body;
@@ -24,21 +28,33 @@ const userlogin = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    
-    const accessToken = jwt.sign({id: user.customer_id, isAdmin: user.is_admin}, "MySecretKey");
 
+    const accessToken = generateAccessToken(user);
+
+    const refreshToken = generateRefreshToken(user);
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,  
+      secure: true,   
+      sameSite: 'None', 
+      maxAge: 7 * 24 * 60 * 60 * 1000 
+    });
+    
+    console.log()
     res.status(200).json({
       message: "Login successful",
       name: user.full_name,
       user_id: user.customer_id,
       is_admin: user.is_admin,
-      accessToken,
+      accessToken,  
+      refreshToken,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const userSignUp = async (req, res) => {
   const { email, password } = req.body;
