@@ -3,9 +3,6 @@ import pool from "../Database/db.js";
 import { generateAccessToken, generateRefreshToken } from "../model/user.model.js";
 
 
-
-
-
 const userlogin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -35,8 +32,6 @@ const userlogin = async (req, res) => {
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,  
-      secure: true,   
-      sameSite: 'None', 
       maxAge: 7 * 24 * 60 * 60 * 1000 
     });
     
@@ -55,6 +50,13 @@ const userlogin = async (req, res) => {
   }
 };
 
+const userSignOut =  (req, res) => {
+  res.cookie('refresh_token', '', {
+      httpOnly: true,
+      expires: new Date(0)
+  });
+  res.Status(200).json({message: "Logout successful"}); 
+}
 
 const userSignUp = async (req, res) => {
   const { email, password } = req.body;
@@ -369,4 +371,4 @@ const showCompletedOrder = async (req, res) => {
 
 
 
-export default { userlogin, userSignUp, getProfile, editProfile, showCart, deleteCartItem, orderShoes, showPendingOrder, showCompletedOrder };
+export default { userlogin, userSignOut, userSignUp, getProfile, editProfile, showCart, deleteCartItem, orderShoes, showPendingOrder, showCompletedOrder };
