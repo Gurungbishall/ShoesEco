@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import adidas from "../../pictures/AdidasResponseCLCrystalWhite.png";
+import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import Navbar from "../Navbar/Navbar";
 import DeleteItem from "./DeleteCartComponent";
 

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import image from "../../pictures/AdidasResponseCLCrystalWhite.png";
+import image from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import BrandLogoList from "../BrandLogoList/Brandlogolist";
 import { useContext } from "react";
 import { SearchContext } from "../../../pages/customerPages/Home";

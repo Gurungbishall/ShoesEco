@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import adidas from "../../pictures/AdidasResponseCLCrystalWhite.png";
+import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import { SearchContext } from "../../../pages/customerPages/Home";
 type Shoe = {
   shoe_id: number;

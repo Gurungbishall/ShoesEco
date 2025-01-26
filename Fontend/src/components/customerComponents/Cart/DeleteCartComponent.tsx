@@ -1,4 +1,4 @@
-import adidas from "../../pictures/AdidasResponseCLCrystalWhite.png";
+import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 
 type CartItem = {
   cart_item_id: number;

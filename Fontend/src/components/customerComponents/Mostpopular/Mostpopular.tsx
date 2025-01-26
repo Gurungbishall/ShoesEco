@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import AdidasResponseCrytalWhite from "../../pictures/AdidasResponseCLCrystalWhite.png";
+import AdidasResponseCrytalWhite from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 
 export default function Mostpopular() {
   const navigate = useNavigate();

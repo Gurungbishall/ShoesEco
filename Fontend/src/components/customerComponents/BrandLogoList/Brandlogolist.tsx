@@ -1,5 +1,5 @@
-import nike from "../../pictures/Icon/294668_nike_icon.png";
-import adidas from "../../pictures/Icon/9056731_adidas_icon.png";
+import nike from "../../../pictures/Icon/294668_nike_icon.png";
+import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 
 export default function BrandLogoList() {
   function Image({ src, alt }: { src: string; alt: string }) {
