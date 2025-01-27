@@ -20,7 +20,7 @@ export default function EditProfile() {
   useEffect(() => {
     const customer_id = sessionStorage.getItem("customer_id");
     if (!customer_id) {
-      navigate("/signup");
+      navigate("/signin");
       return;
     }
 
@@ -37,7 +37,7 @@ export default function EditProfile() {
   }, [navigate]);
 
   const toggleHome = () => {
-    navigate("/");
+    navigate("/profile");
   };
 
   const {

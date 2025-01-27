@@ -38,7 +38,7 @@ export default function Navbar() {
       <div
         className="flex flex-col items-center justify-center"
         onClick={() => {
-          navigate("/editprofile");
+          navigate("/Profile");
         }}
       >
         <i className="bx bxs-user bx-sm" />
