@@ -1,6 +1,8 @@
 import express from 'express';
-import { showShoes,displayIndividualShoe,addShoe,searchShoes } from "../controllers/shoes.controller.js";
-
+import { showShoes } from "../controllers/DisplayShoesByBrand/DisplayShoesByBrand.js";
+import { displayIndividualShoe } from '../controllers/IndividualShoe/IndividualShoe.controller.js';
+import { searchShoes } from '../controllers/SearchShoe/SearchShoe.controller.js';
+import { addShoe } from '../controllers/AddingShoeInCart/AddingShoeInCart.js';
 const router = express.Router();
 
 router.get('/showshoes', showShoes);

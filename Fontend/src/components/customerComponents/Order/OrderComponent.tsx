@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Container from "../../Container";
 import PendingOrderComponent from "./PendingOrderComponent";
 import CompletedOrderComponent from "./CompletedOrderComponent";
 
@@ -17,7 +18,7 @@ export default function OrderComponent() {
 
   return (
     <>
-      <div className="p-6 flex flex-col gap-3 ">
+      <Container>
         <div>
           <span className="text-2xl font-bold">My Order</span>
         </div>
@@ -66,7 +67,7 @@ export default function OrderComponent() {
             />
           ) : null}
         </div>
-      </div>
+      </Container>
     </>
   );
 }

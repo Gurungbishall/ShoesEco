@@ -29,9 +29,6 @@ export default function Bottombody() {
   const { searchfocus } = context;
 
   const navigate = useNavigate();
-  const handleSeeAll = () => {
-    navigate("/mostpopular");
-  };
 
   const onClick = (name: string) => {
     setBrand_name(name);
@@ -87,7 +84,14 @@ export default function Bottombody() {
         <div className="flex flex-col gap-2 pb-20">
           <div className="flex justify-between font-bold">
             <span className="text-xl">Most Popular</span>
-            <span className="cursor-pointer" onClick={handleSeeAll}>
+            <span
+              className="cursor-pointer"
+              onClick={() => {
+                navigate("mostpopular", {
+                  state: { brand_name },
+                });
+              }}
+            >
               See all
             </span>
           </div>

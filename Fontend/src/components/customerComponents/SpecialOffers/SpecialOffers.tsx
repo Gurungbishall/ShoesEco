@@ -5,7 +5,7 @@ export default function SpecialOffers() {
   const navigate = useNavigate();
 
   const toggleHome = () => {
-    navigate("/home");
+    navigate("/");
   };
   return (
     <>

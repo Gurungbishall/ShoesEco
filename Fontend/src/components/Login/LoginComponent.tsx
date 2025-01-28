@@ -43,7 +43,7 @@ export default function LoginComponent() {
         const customer_ID = response.data.user_id;
         sessionStorage.setItem("customer_name", customer_Name);
         sessionStorage.setItem("customer_id", customer_ID);
-
+        sessionStorage.setItem("is_admin", response.data.is_admin);
         navigate("/");
       }
     } catch (error: any) {

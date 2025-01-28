@@ -4,6 +4,7 @@ import axios from "axios";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import Navbar from "../Navbar/Navbar";
 import DeleteItem from "./DeleteCartComponent";
+import Container from "../../Container";
 
 type CartItem = {
   cart_item_id: number;
@@ -88,10 +89,10 @@ export default function CartComponent() {
       state: { shoeId, from: location.pathname },
     });
   };
-  
+
   const checkout = () => {
     navigate("/checkout");
-  }
+  };
 
   const loadingDeleteMenu = (shoe: CartItem) => {
     setSelectedShoe(shoe);
@@ -138,9 +139,11 @@ export default function CartComponent() {
 
   return (
     <>
-      <div className="p-6 flex flex-col gap-3 p">
+      <Container>
         <div>
-          <span className="text-2xl font-bold" onClick={checkout}>My Cart</span>
+          <span className="text-2xl font-bold" onClick={checkout}>
+            My Cart
+          </span>
         </div>
 
         {error && (
@@ -203,7 +206,7 @@ export default function CartComponent() {
             </div>
           ))}
         </div>
-      </div>
+      </Container>
 
       {loadingDelete && selectedShoe && (
         <div className="fixed inset-0 flex flex-col w-full bg-black bg-opacity-50">

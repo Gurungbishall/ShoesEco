@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import Container from "../../Container";
+
 export default function ProfileComponent() {
   const navigate = useNavigate();
   const customer_Name = sessionStorage.getItem("customer_name");
 
   return (
     <>
-      <div className="w-screen p-4 flex flex-col gap-4 ">
+      <Container>
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold">Profile</span>
           <i className="bx bx-dots-horizontal-rounded p-1 border-2 border-black rounded-full" />
@@ -29,7 +31,7 @@ export default function ProfileComponent() {
             className="flex justify-between text-red-500 cursor-pointer"
             onClick={() => {
               sessionStorage.clear();
-              navigate("/")
+              navigate("/");
             }}
           >
             <div className="flex gap-3 items-center">
@@ -39,7 +41,7 @@ export default function ProfileComponent() {
             <i className="bx bxs-chevron-right" />
           </div>
         </div>
-      </div>
+      </Container>
     </>
   );
 }
