@@ -2,24 +2,25 @@ import jwt from 'jsonwebtoken';
 
 
 
-const Verify = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader) {
-      const token = authHeader.split(" ")[1];
-  
-      jwt.verify(token, "mySecretKey", (err, user) => {
-        if (err) {
-          return res.status(403).json("Token is not valid!");
-        }
-  
-        req.user = user;
-        next();
-      });
-    } else {
-      res.status(401).json("You are not authenticated!");
-    }
-  };
+const authenticateUser = async (req, res, next) => {
+  const accessToken = req.headers.authorization && req.headers.authorization.split(" ")[1];
+    
+  if (!accessToken) {
+    return res.status(401).json({ message: "No access token provided" });
+  }
+
+  try {
+    const user = jwt.verify(accessToken, "MySecretKey");
+    req.user = user; 
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid or expired access token" });
+  }
+};
+
+
+
   
 
-export { Verify };
+export { authenticateUser};
 

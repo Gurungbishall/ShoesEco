@@ -15,7 +15,7 @@ type Shoe = {
   rating: number;
 };
 
-export default function Shoe() {
+export default function ShoeDetail() {
   const location = useLocation();
   const shoeId = location.state?.shoeId;
   const previousRoute = location.state?.from;

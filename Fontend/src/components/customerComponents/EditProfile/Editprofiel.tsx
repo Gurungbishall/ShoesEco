@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 import Input from "../../Input";
 import Button from "../../Button";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -19,13 +20,19 @@ export default function EditProfile() {
 
   useEffect(() => {
     const customer_id = sessionStorage.getItem("customer_id");
+    const accessToken = Cookies.get("accessToken");
     if (!customer_id) {
       navigate("/signin");
       return;
     }
 
     axios
-      .get(`http://localhost:3000/user/getProfile?customer_id=${customer_id}`)
+      .get(`http://localhost:3000/user/getProfile?customer_id=${customer_id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      })
       .then((response) => {
         const { full_name, email, phone_number } = response.data;
         setUserData({ full_name, email, phone_number });
@@ -50,6 +57,7 @@ export default function EditProfile() {
     setLoading(true);
     try {
       const customer_id = sessionStorage.getItem("customer_id");
+      const accessToken = Cookies.get("accessToken");
       if (!customer_id) return;
 
       const response = await axios.post(
@@ -57,6 +65,12 @@ export default function EditProfile() {
         {
           ...data,
           customer_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
         }
       );
 
@@ -65,6 +79,7 @@ export default function EditProfile() {
         sessionStorage.removeItem("customer_name");
         sessionStorage.setItem("customer_name", customer_Name);
         navigate("/editprofile");
+        alert("Successfully Changed");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import Navbar from "../Navbar/Navbar";
 import DeleteItem from "./DeleteCartComponent";
@@ -52,15 +53,22 @@ export default function CartComponent() {
 
   const fetchCartData = async () => {
     const customer_id = sessionStorage.getItem("customer_id");
+    const accessToken = Cookies.get("accessToken");
 
     if (!customer_id) {
-      setError("Customer ID is missing. Please log in.");
+      setError("Please log in.");
       return;
     }
 
     try {
       const response = await axios.get<CartResponse>(
-        `http://localhost:3000/user/showcart?customer_id=${customer_id}`
+        `http://localhost:3000/user/showcart?customer_id=${customer_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
       );
       const fetchedItems = response.data.items;
       setShoes(fetchedItems);
@@ -106,15 +114,25 @@ export default function CartComponent() {
   const deleteCartItem = async (cart_item_id: number) => {
     try {
       const customer_id = sessionStorage.getItem("customer_id");
+      const accessToken = Cookies.get("accessToken");
 
       if (!customer_id) {
-        setError("Customer ID is missing. Please log in.");
+        setError("Please log in.");
         return;
       }
 
-      await axios.post("http://localhost:3000/user/deletecartitem", {
-        cart_item_id: cart_item_id,
-      });
+      await axios.post(
+        "http://localhost:3000/user/deletecartitem",
+        {
+          cart_item_id: cart_item_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
+      );
 
       setShoes((prevItems) =>
         prevItems.filter((item) => item.cart_item_id !== cart_item_id)

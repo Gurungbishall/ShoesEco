@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Cookies from "js-cookie";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 
 type PendingOrderItem = {
@@ -25,18 +26,25 @@ export default function PendingOrderComponent({
   handleShoeClick: (shoe_id: number) => void;
 }) {
   const [shoes, setShoes] = useState<PendingOrderItem[]>([]);
-
+  
   const fetchPendingOrderData = async () => {
+    const accessToken = Cookies.get("accessToken");
     const customer_id = sessionStorage.getItem("customer_id");
 
     if (!customer_id) {
-      setError("Customer ID is missing. Please log in.");
+      setError("Please log in.");
       return;
     }
 
     try {
       const response = await axios.get<PendingOrderResponse>(
-        `http://localhost:3000/user/pendingorder?customer_id=${customer_id}`
+        `http://localhost:3000/user/pendingorder?customer_id=${customer_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
       );
       const fetchedItems = response.data.items;
       setShoes(fetchedItems);

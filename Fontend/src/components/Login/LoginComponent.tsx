@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../Button";
 import Input from "../Input";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 type LoginFormInputs = {
   email: string;
@@ -41,9 +42,12 @@ export default function LoginComponent() {
       if (response.status === 200) {
         const customer_Name = response.data.name;
         const customer_ID = response.data.user_id;
+        Cookies.set("accessToken", response.data.accessToken, {
+          sameSite: "Strict",
+          expires: 7,
+        });
         sessionStorage.setItem("customer_name", customer_Name);
         sessionStorage.setItem("customer_id", customer_ID);
-        sessionStorage.setItem("is_admin", response.data.is_admin);
         navigate("/");
       }
     } catch (error: any) {
