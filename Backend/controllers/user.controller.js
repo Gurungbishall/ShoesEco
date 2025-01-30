@@ -1,7 +1,9 @@
 import bcrypt from "bcrypt";
 import pool from "../Database/db.js";
-import { generateAccessToken, generateRefreshToken } from "../model/user.model.js";
-
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../model/user.model.js";
 
 const userlogin = async (req, res) => {
   const { email, password } = req.body;
@@ -30,16 +32,18 @@ const userlogin = async (req, res) => {
 
     const refreshToken = generateRefreshToken(user);
 
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,  
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      maxAge: 3600000,
+      sameSite: 'None',
     });
-    
+
     res.status(200).json({
       message: "Login successful",
       name: user.full_name,
       user_id: user.customer_id,
       is_admin: user.is_admin,
-      accessToken,  
+      accessToken,
       refreshToken,
     });
   } catch (error) {
@@ -48,13 +52,13 @@ const userlogin = async (req, res) => {
   }
 };
 
-const userSignOut =  (req, res) => {
-  res.cookie('refresh_token', '', {
-      httpOnly: true,
-      expires: new Date(0)
+const userSignOut = (req, res) => {
+  res.cookie("refresh_token", "", {
+    httpOnly: true,
+    expires: new Date(0),
   });
-  res.Status(200).json({message: "Logout successful"}); 
-}
+  res.Status(200).json({ message: "Logout successful" });
+};
 
 const userSignUp = async (req, res) => {
   const { email, password } = req.body;
@@ -157,216 +161,4 @@ const editProfile = async (req, res) => {
   }
 };
 
-const showCart = async (req, res) => {
-  const { customer_id } = req.query;
-
-  try {
-    let result = await pool.query(
-      'SELECT cart_id FROM shopping_cart WHERE customer_id = $1 ORDER BY created_at DESC LIMIT 1',
-      [customer_id]
-    );
-
-    let cart_id;
-
-    if (result.rows.length > 0) {
-      cart_id = result.rows[0].cart_id;
-    } else {
-      return res.status(404).json({ message: "No cart found for this customer." });
-    }
-
-    result = await pool.query(
-      `SELECT ci.cart_item_id, ci.quantity, s.shoe_id, s.model_name, s.size, s.color, s.price, s.description
-       FROM cart_items ci
-       JOIN shoes s ON ci.shoe_id = s.shoe_id
-       WHERE ci.cart_id = $1`,
-      [cart_id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Cart is empty." });
-    }
-
-    return res.status(200).json({
-      cart_id,
-      items: result.rows
-    });
-
-  } catch (error) {
-    console.error("Error fetching cart:", error);
-    return res.status(500).json({ message: "Internal server error." });
-  }
-};
-
-const deleteCartItem = async (req, res) => {
-  const { cart_item_id} = req.body;
-   
-  if(!cart_item_id){
-    return res.status(400).json({message: "Required cart item id"})
-  }
-
-  try{
-    
-    await pool.query(
-      'DELETE FROM cart_items WHERE cart_item_id = $1', [cart_item_id])
-      
-
-     return res.status(200).json({
-      message: "Successfully delete"
-     }) 
-  }catch(error){
-    console.error("Error fetching cart:", error);
-    return res.status(500).json({ message: "Internal server error." });
-  }
-
-}
-
-const orderShoes = async (req, res) => {
-  const { customer_id, items } = req.body;
-
-  if (!customer_id || !items || items.length === 0) {
-    return res.status(400).json({ message: 'Invalid order data.' });
-  }
-
-  try {
-    await pool.query('BEGIN');
-
-    const orderResult = await pool.query(
-      'INSERT INTO orders (customer_id) VALUES ($1) RETURNING order_id',
-      [customer_id]
-    );
-
-    const order_id = orderResult.rows[0].order_id;
-
-    for (const item of items) {
-      const { shoe_id, quantity, price } = item;
-
-      const shoeResult = await pool.query(
-        'SELECT stock_quantity, price FROM shoes WHERE shoe_id = $1',
-        [shoe_id]
-      );
-
-      if (shoeResult.rows.length === 0) {
-        throw new Error('Shoe not found.');
-      }
-
-      const shoe = shoeResult.rows[0];
-      const stock_quantity = shoe.stock_quantity;
-
-      if (stock_quantity < quantity) {
-        throw new Error(`Not enough stock for shoe ID ${shoe_id}.`);
-      }
-
-      await pool.query(
-        'INSERT INTO order_items (order_id, shoe_id, quantity, price) VALUES ($1, $2, $3, $4)',
-        [order_id, shoe_id, quantity, price || shoe.price] 
-      );
-
-      await pool.query(
-        'UPDATE shoes SET stock_quantity = stock_quantity - $1 WHERE shoe_id = $2',
-        [quantity, shoe_id]
-      );
-    }
-
-    await pool.query(
-      'DELETE FROM cart_items WHERE cart_id = (SELECT cart_id FROM shopping_cart WHERE customer_id = $1)',
-      [customer_id]
-    );
-
-    await pool.query('COMMIT');
-    
-    return res.status(201).json({ message: 'Order placed successfully.', order_id });
-  } catch (error) {
-    await pool.query('ROLLBACK');
-    console.error(error);
-    return res.status(500).json({ message: 'An error occurred while placing the order.' });
-  }
-};
-
-const showPendingOrder = async (req, res) => {
-  const {customer_id}= req.query;
-
-  if(!customer_id)
-    return res.status(400).json({message: 'Error'})
-
-    try {
-      let result = await pool.query(
-        'SELECT order_id FROM orders WHERE customer_id = $1 AND status = $2',
-        [customer_id, "Pending"]
-      );
-      
-      let order_id;
-      
-      if(result.rows.length > 0){
-        order_id = result.rows[0].order_id;
-      }else{
-        return res.status(404).json({message: "No Order"});
-      } 
-      
-      result = await pool.query(
-        `SELECT oi.order_item_id, oi.quantity, oi.price, s.shoe_id, s.model_name, s.color, s.size
-         FROM order_items oi
-         JOIN shoes s ON oi.shoe_id = s.shoe_id
-         WHERE oi.order_id = $1`,
-         [order_id]
-      )
-
-      if(result.rows.length === 0){
-        return res.status(404).json({message: "No Pending order."});
-      }
-
-      return res.status(200).json({
-        order_id,
-        items: result.rows
-      })
-
-    }catch (error) {
-      console.error("Error fetching cart:", error);
-      return res.status(500).json({ message: "Internal server error." });
-    }
-};
-const showCompletedOrder = async (req, res) => {
-  const {customer_id}= req.query;
-
-  if(!customer_id)
-    return res.status(400).json({message: 'Error'})
-
-    try {
-      let result = await pool.query(
-        'SELECT order_id FROM orders WHERE customer_id = $1 AND status = $2',
-        [customer_id, "Done"]
-      );
-      
-      let order_id;
-      
-      if(result.rows.length > 0){
-        order_id = result.rows[0].order_id;
-      }else{
-        return res.status(404).json({message: "No Order"});
-      } 
-      
-      result = await pool.query(
-        `SELECT oi.order_item_id, oi.quantity, oi.price, s.shoe_id, s.model_name, s.color, s.size
-         FROM order_items oi
-         JOIN shoes s ON oi.shoe_id = s.shoe_id
-         WHERE oi.order_id = $1`,
-         [order_id]
-      )
-
-      if(result.rows.length === 0){
-        return res.status(404).json({message: "No Completed order."});
-      }
-
-      return res.status(200).json({
-        order_id,
-        items: result.rows
-      })
-
-    }catch (error) {
-      console.error("Error fetching cart:", error);
-      return res.status(500).json({ message: "Internal server error." });
-    }
-};
-
-
-
-export default { userlogin, userSignOut, userSignUp, getProfile, editProfile, showCart, deleteCartItem, orderShoes, showPendingOrder, showCompletedOrder };
+export default { userlogin, userSignOut, userSignUp, getProfile, editProfile };

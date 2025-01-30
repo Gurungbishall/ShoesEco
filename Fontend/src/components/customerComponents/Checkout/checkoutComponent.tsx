@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 
 type CheckOutItem = {
@@ -31,6 +32,7 @@ export default function CheckOutComponent() {
 
   const fetchCheckOutData = async () => {
     const customer_id = sessionStorage.getItem("customer_id");
+    const accessToken = Cookies.get("accessToken");
 
     if (!customer_id) {
       setError("Customer ID is missing. Please log in.");
@@ -39,7 +41,13 @@ export default function CheckOutComponent() {
 
     try {
       const response = await axios.get<CheckOutResponse>(
-        `http://localhost:3000/user/showcart?customer_id=${customer_id}`
+        `http://localhost:3000/user/showcart?customer_id=${customer_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
       );
       const fetchedItems = response.data.items;
       setShoes(fetchedItems);
@@ -71,6 +79,7 @@ export default function CheckOutComponent() {
 
   const SendOrderList = async () => {
     const customer_id = sessionStorage.getItem("customer_id");
+    const accessToken = Cookies.get("accessToken");
 
     if (!customer_id) {
       setError("Customer ID is missing. Please log in.");
@@ -86,6 +95,12 @@ export default function CheckOutComponent() {
             shoe_id: shoe.shoe_id,
             quantity: quantities[shoe.cart_item_id] || shoe.quantity,
           })),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
         }
       );
 

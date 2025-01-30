@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
+import axiosJWT from "../../RefreshTheToken/RefreshTheToken";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import Navbar from "../Navbar/Navbar";
 import DeleteItem from "./DeleteCartComponent";
@@ -61,7 +62,7 @@ export default function CartComponent() {
     }
 
     try {
-      const response = await axios.get<CartResponse>(
+      const response = await axiosJWT.get<CartResponse>(
         `http://localhost:3000/user/showcart?customer_id=${customer_id}`,
         {
           headers: {
@@ -148,7 +149,6 @@ export default function CartComponent() {
       if (shoes.length === 1) {
         setError("Cart is empty");
       }
-      console.log("Item deleted successfully.");
     } catch (error) {
       console.error("Error deleting item:", error);
       setError("Error deleting item from the cart.");

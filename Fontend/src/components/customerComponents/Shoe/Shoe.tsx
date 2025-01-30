@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 
 type Shoe = {
@@ -66,14 +67,24 @@ export default function ShoeDetail() {
   if (!shoe) return <div>No shoe found</div>;
 
   const addShoeToCart = async () => {
-    try {
-      const response = await axios.post("http://localhost:3000/shoes/addshoe", {
-        customer_id: customer_id,
-        shoe_id: shoeId,
-        quantity: quantity,
-      });
+    const accessToken = Cookies.get("accessToken");
 
-      console.log("Response:", response.data);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/shoes/addshoe",
+        {
+          customer_id: customer_id,
+          shoe_id: shoeId,
+          quantity: quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
+      );
+
       alert(response.data.message);
     } catch (error) {
       console.error("Error adding shoe to cart:", error);

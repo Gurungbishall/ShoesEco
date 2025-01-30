@@ -42,9 +42,9 @@ export default function LoginComponent() {
       if (response.status === 200) {
         const customer_Name = response.data.name;
         const customer_ID = response.data.user_id;
+
         Cookies.set("accessToken", response.data.accessToken, {
           sameSite: "Strict",
-          expires: 7,
         });
         sessionStorage.setItem("customer_name", customer_Name);
         sessionStorage.setItem("customer_id", customer_ID);
