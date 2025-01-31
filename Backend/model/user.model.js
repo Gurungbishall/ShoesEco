@@ -18,7 +18,9 @@ const generateRefreshToken = (user) => {
 
 const refreshToken = async (req, res) => {
   const refreshToken = req.cookies.refresh_token;
-  console.log(refreshToken);
+  const accessToken = req.cookies.accessToken;
+  console.log("refresh:", refreshToken);
+  console.log("acesss", accessToken);
 
   if (!refreshToken) {
     return res.status(401).json({ message: "Refresh token not provided" });
@@ -36,8 +38,8 @@ const refreshToken = async (req, res) => {
 
       res.cookie("refresh_token", newRefreshToken, {
         httpOnly: true,
+        sameSite: "None",
         maxAge: 3600000,
-        sameSite: 'None',
       });
 
       res.status(200).json({

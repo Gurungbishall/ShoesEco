@@ -34,8 +34,8 @@ const userlogin = async (req, res) => {
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
+      sameSite: "None",
       maxAge: 3600000,
-      sameSite: 'None',
     });
 
     res.status(200).json({
@@ -44,7 +44,6 @@ const userlogin = async (req, res) => {
       user_id: user.customer_id,
       is_admin: user.is_admin,
       accessToken,
-      refreshToken,
     });
   } catch (error) {
     console.error(error);

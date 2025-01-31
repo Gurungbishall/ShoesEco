@@ -52,7 +52,7 @@ export default function OrderComponent() {
             Completed
           </span>
         </div>
-        <div className="flex flex-col gap-3 pb-20">
+        <div className="flex flex-col gap-3 pb-20 overflow-y-auto">
           {displayActive ? (
             <PendingOrderComponent
               setError={setError}

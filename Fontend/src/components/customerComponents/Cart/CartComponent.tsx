@@ -4,6 +4,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import axiosJWT from "../../RefreshTheToken/RefreshTheToken";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
+import TotalMoneyAndCheckOutbutton from "./TotalMoneyAndCheckOutbutton";
 import Navbar from "../Navbar/Navbar";
 import DeleteItem from "./DeleteCartComponent";
 import Container from "../../Container";
@@ -22,11 +23,13 @@ type CartItem = {
 type CartResponse = {
   cart_id: number;
   items: CartItem[];
+  total_price: number;
 };
 
 export default function CartComponent() {
   const [shoes, setShoes] = useState<CartItem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [TotalPrice, setTotalPrice] = useState(0);
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [selectedShoe, setSelectedShoe] = useState<CartItem | null>(null);
@@ -73,6 +76,7 @@ export default function CartComponent() {
       );
       const fetchedItems = response.data.items;
       setShoes(fetchedItems);
+      setTotalPrice(response.data.total_price);
 
       const initialQuantities = fetchedItems.reduce((acc, shoe) => {
         acc[shoe.cart_item_id] = shoe.quantity;
@@ -93,16 +97,6 @@ export default function CartComponent() {
     fetchCartData();
   }, []);
 
-  const handleShoeClick = (shoeId: number) => {
-    navigate("/shoe", {
-      state: { shoeId, from: location.pathname },
-    });
-  };
-
-  const checkout = () => {
-    navigate("/checkout");
-  };
-
   const loadingDeleteMenu = (shoe: CartItem) => {
     setSelectedShoe(shoe);
     setLoadingDelete(true);
@@ -122,23 +116,25 @@ export default function CartComponent() {
         return;
       }
 
+      const itemToDelete = shoes.find(
+        (item) => item.cart_item_id === cart_item_id
+      );
+      const itemPrice = itemToDelete ? parseFloat(itemToDelete.price) : 0;
+
       await axios.post(
         "http://localhost:3000/user/deletecartitem",
+        { cart_item_id },
         {
-          cart_item_id: cart_item_id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
           withCredentials: true,
         }
       );
 
+      setTotalPrice((prevTotal) => prevTotal - itemPrice);
+
       setShoes((prevItems) =>
         prevItems.filter((item) => item.cart_item_id !== cart_item_id)
       );
-
       setQuantities((prevQuantities) => {
         const { [cart_item_id]: _, ...rest } = prevQuantities;
         return rest;
@@ -158,24 +154,25 @@ export default function CartComponent() {
   return (
     <>
       <Container>
-        <div>
-          <span className="text-2xl font-bold" onClick={checkout}>
-            My Cart
-          </span>
+        <div className="top-0 left-0 w-full z-10 p-4 fixed flex flex-col gap-2 bg-white">
+          <span className="text-2xl font-bold">My Cart</span>
+          {error && (
+            <div className="bg-red-500 text-white p-4 rounded-md mb-4">
+              <span>{error}</span>
+            </div>
+          )}
         </div>
 
-        {error && (
-          <div className="bg-red-500 text-white p-4 rounded-md mb-4">
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-3 pb-20">
+        <div className="flex flex-col gap-3 pt-10 pb-40 overflow-y-auto">
           {shoes.map((shoe) => (
             <div
               key={shoe.cart_item_id}
-              className="flex gap-4 bg-slate-100 rounded-3xl relative"
-              onClick={() => handleShoeClick(shoe.shoe_id)}
+              className="flex gap-4 bg-slate-100 rounded-3xl relative cursor-pointer"
+              onClick={() => {
+                navigate("/shoe", {
+                  state: { shoeId: shoe.shoe_id, from: location.pathname },
+                });
+              }}
             >
               <img
                 src={adidas}
@@ -237,6 +234,9 @@ export default function CartComponent() {
         </div>
       )}
 
+      {!error && !loadingDelete && (
+        <TotalMoneyAndCheckOutbutton TotalPrice={TotalPrice} />
+      )}
       {!loadingDelete && <Navbar />}
     </>
   );

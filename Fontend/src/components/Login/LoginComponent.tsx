@@ -36,7 +36,10 @@ export default function LoginComponent() {
     try {
       const response = await axios.post(
         "http://localhost:3000/user/signin",
-        data
+        data,
+        {
+          withCredentials: true,
+        }
       );
 
       if (response.status === 200) {
@@ -46,6 +49,7 @@ export default function LoginComponent() {
         Cookies.set("accessToken", response.data.accessToken, {
           sameSite: "Strict",
         });
+
         sessionStorage.setItem("customer_name", customer_Name);
         sessionStorage.setItem("customer_id", customer_ID);
         navigate("/");

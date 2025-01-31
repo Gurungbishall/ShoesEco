@@ -31,9 +31,14 @@ const showCart = async (req, res) => {
       return res.status(404).json({ message: "Cart is empty." });
     }
 
+    const totalPrice = result.rows.reduce((acc, item) => {
+      return acc + item.price * item.quantity;
+    }, 0);
+
     return res.status(200).json({
       cart_id,
       items: result.rows,
+      total_price: totalPrice,
     });
   } catch (error) {
     console.error("Error fetching cart:", error);
