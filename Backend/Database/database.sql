@@ -82,11 +82,28 @@ CREATE TABLE cart_items (
     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- --- Dynamic View for Popular Shoes ---
+-- Table to store customer reviews for shoes
+CREATE TABLE reviews (
+    review_id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES customers(customer_id) ON DELETE CASCADE,
+    shoe_id INT REFERENCES shoes(shoe_id) ON DELETE CASCADE,
+    rating DECIMAL(3,2) CHECK (rating >= 0 AND rating <= 5), 
+    review_text TEXT, 
+    review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (customer_id, shoe_id) 
+);
+    
+SELECT
+    s.shoe_id,
+    s.model_name,
+    AVG(r.rating) AS average_rating
+FROM shoes s
+LEFT JOIN reviews r ON s.shoe_id = r.shoe_id
+GROUP BY s.shoe_id;
 
--- Create a view for popular shoes based on the total quantity sold and average rating
-CREATE VIEW popular_shoes_view AS
-SELECT 
+-- View for popular shoes based on average rating and number of reviews
+CREATE VIEW popular_shoes_reviewed AS
+SELECT
     s.shoe_id,
     s.model_name,
     s.brand_id,
@@ -94,11 +111,10 @@ SELECT
     s.color,
     s.price,
     s.stock_quantity,
-    s.rating,
-    COALESCE(SUM(oi.quantity), 0) AS total_sold, -- Total quantity sold from the order_items
-    AVG(s.rating) AS average_rating -- Average rating for the shoes
+    AVG(r.rating) AS average_rating,
+    COUNT(r.review_id) AS review_count
 FROM shoes s
-LEFT JOIN order_items oi ON s.shoe_id = oi.shoe_id
+LEFT JOIN reviews r ON s.shoe_id = r.shoe_id
 GROUP BY s.shoe_id
-HAVING COALESCE(SUM(oi.quantity), 0) > 0 -- Only shoes that have been sold
-ORDER BY total_sold DESC, average_rating DESC; -- Sort by the most sold and highest rating
+HAVING COUNT(r.review_id) > 0
+ORDER BY average_rating DESC, review_count DESC;

@@ -31,7 +31,7 @@ const showPendingOrder = async (req, res) => {
       quantity: row.quantity,
     }));
 
-    return res.status(200).json(shoes); 
+    return res.status(200).json(shoes);
   } catch (error) {
     console.error("Error fetching pending orders:", error);
     return res.status(500).json({ message: "Internal server error." });

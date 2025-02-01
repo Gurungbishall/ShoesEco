@@ -7,21 +7,26 @@ import { orderShoes } from "../controllers/OrderShoes/OrderShoes.js";
 import { showPendingOrder } from "../controllers/ShowPendingOrders/ShowPendingOrders.js";
 import { showCompletedOrder } from "../controllers/ShowCompletedOrders/ShowCompletedOrders.js";
 import { authenticateUser } from "../middlerwares/auth.middleware.js";
+import { reviewShoe } from "../controllers/ReviewingShoe/ReviewingShoe.js";
 import { refreshToken } from "../model/user.model.js";
-
+import { listOfReviewOfShoe } from "../controllers/ListOFReviewOfShoe/ListOfReviewOfShoe.js";
 const router = express.Router();
 
 router.post("/signin", userController.userlogin);
 router.post("/signup", userController.userSignUp);
 router.post("/signout", userController.userSignOut);
 router.post("/refresh", refreshToken);
+
+router.get("/review-list", listOfReviewOfShoe);
 //protected//
 router.get("/getProfile", authenticateUser, userController.getProfile);
 router.post("/editprofile", authenticateUser, userController.editProfile);
 router.get("/showcart", authenticateUser, showCart);
-router.post("/deletecartitem", authenticateUser, deleteCartItem);
-router.post("/ordershoes",authenticateUser ,orderShoes);
 router.get("/pendingorder", authenticateUser, showPendingOrder);
 router.get("/completedorder", authenticateUser, showCompletedOrder);
+
+router.post("/review", authenticateUser, reviewShoe);
+router.post("/deletecartitem", authenticateUser, deleteCartItem);
+router.post("/ordershoes", authenticateUser, orderShoes);
 
 export default router;

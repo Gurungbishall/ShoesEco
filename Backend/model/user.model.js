@@ -4,7 +4,7 @@ const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user.customer_id, isAdmin: user.is_admin },
     "MySecretKey",
-    { expiresIn: "15m" }
+    { expiresIn: "40m" }
   );
 };
 
@@ -12,7 +12,7 @@ const generateRefreshToken = (user) => {
   return jwt.sign(
     { id: user.customer_id, isAdmin: user.is_admin },
     "MyRefreshSecretKey",
-    { expiresIn: "15m" }
+    { expiresIn: "40m" }
   );
 };
 
