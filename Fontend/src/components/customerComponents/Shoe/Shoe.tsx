@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
+import ReviewListComponent from "../ReviewList/ReviewListComponent";
 import LeaveReviewComponent from "../LeaveReview/leaveReview";
 
 type Shoe = {
@@ -14,7 +15,7 @@ type Shoe = {
   price: string;
   size: string;
   stock_quantity: number;
-  rating: number;
+  average_rating: number;
 };
 
 export default function ShoeDetail() {
@@ -23,6 +24,7 @@ export default function ShoeDetail() {
   const previousRoute = location.state?.from;
   const [shoe, setShoe] = useState<Shoe | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingReviewList, setLoadingReviewList] = useState<boolean>(false);
   const [loadingLeaveReview, setLoadingLeaveReview] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<number>(1);
   const navigate = useNavigate();
@@ -78,7 +80,7 @@ export default function ShoeDetail() {
     <>
       <div className="flex flex-col gap-3">
         <i
-          className="absolute pl-2 pt-3 fa-solid fa-arrow-left fa-1x cursor-pointer"
+          className="absolute left-4 pt-4 fa-solid fa-arrow-left fa-2x cursor-pointer"
           onClick={() => {
             navigate(previousRoute);
           }}
@@ -88,8 +90,12 @@ export default function ShoeDetail() {
           <div className="py-3 flex flex-col gap-4 border-b-2">
             <span className="text-3xl font-bold">{shoe.model_name}</span>
             <div className="flex items-center justify-between">
-              <span>
-                <i className="bx bxs-star-half" /> {shoe.rating}
+              <span
+                onClick={() => {
+                  setLoadingReviewList(true);
+                }}
+              >
+                <i className="bx bxs-star-half" /> {shoe.average_rating}
               </span>
               <div
                 className="w-5/12 p-2 text-center text-white font-bold rounded-full bg-black cursor-pointer"
@@ -152,6 +158,12 @@ export default function ShoeDetail() {
           </div>
         </div>
       </div>
+      {loadingReviewList && (
+        <ReviewListComponent
+          shoeId={shoeId}
+          setLoading={setLoadingReviewList}
+        />
+      )}
       {loadingLeaveReview && (
         <div className="fixed inset-0 flex flex-col w-full bg-black bg-opacity-50">
           <div className="h-2/3" />

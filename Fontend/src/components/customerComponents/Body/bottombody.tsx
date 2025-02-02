@@ -13,7 +13,7 @@ type Shoe = {
   price: string;
   size: string;
   stock_quantity: number;
-  rating: number;
+  average_rating: number;
 };
 
 export default function Bottombody() {
@@ -87,7 +87,7 @@ export default function Bottombody() {
             <span
               className="cursor-pointer"
               onClick={() => {
-                navigate("mostpopular", {
+                navigate("/mostpopular", {
                   state: { brand_name },
                 });
               }}
@@ -120,7 +120,7 @@ export default function Bottombody() {
                 </span>
                 <div className="flex justify-between font-bold">
                   <span>
-                    <i className="bx bxs-star-half" /> {shoe.rating}
+                    <i className="bx bxs-star-half" /> {shoe.average_rating}
                   </span>
                   <span>$ {shoe.price}</span>
                 </div>

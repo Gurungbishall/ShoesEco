@@ -118,3 +118,26 @@ LEFT JOIN reviews r ON s.shoe_id = r.shoe_id
 GROUP BY s.shoe_id
 HAVING COUNT(r.review_id) > 0
 ORDER BY average_rating DESC, review_count DESC;
+
+-- Step 1: Create the function to update average rating
+CREATE OR REPLACE FUNCTION update_average_rating() 
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE shoes
+    SET average_rating = (
+        SELECT AVG(rating)
+        FROM reviews
+        WHERE shoe_id = NEW.shoe_id
+    )
+    WHERE shoe_id = NEW.shoe_id;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Step 2: Create the trigger to fire after review insert or update
+CREATE TRIGGER after_review_insert_or_update
+AFTER INSERT OR UPDATE ON reviews
+FOR EACH ROW
+EXECUTE FUNCTION update_average_rating();
+    

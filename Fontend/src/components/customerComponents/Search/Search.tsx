@@ -14,7 +14,7 @@ type searchShoe = {
   price: string;
   size: string;
   stock_quantity: number;
-  rating: number;
+  average_rating: number;
 };
 
 export default function Search() {
@@ -32,7 +32,7 @@ export default function Search() {
 
   const handleShoeClick = (shoeId: number) => {
     navigate("/shoe", {
-      state: { shoeId },
+      state: { shoeId, from: location.pathname },
     });
   };
 
@@ -115,7 +115,7 @@ export default function Search() {
               </span>
               <div className="flex justify-between font-bold">
                 <span>
-                  <i className="bx bxs-star-half" /> {shoe.rating}
+                  <i className="bx bxs-star-half" /> {shoe.average_rating}
                 </span>
                 <span>$ {shoe.price}</span>
               </div>

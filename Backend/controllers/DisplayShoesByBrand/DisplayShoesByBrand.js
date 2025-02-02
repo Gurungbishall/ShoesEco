@@ -1,4 +1,4 @@
-import pool from "../../Database/db.js";
+ import pool from "../../Database/db.js";
 
 const showShoes = async (req, res) => {
   try {
