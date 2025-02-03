@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Container from "../../Container";
 import axios from "axios";
+import { formatDistanceToNow } from "date-fns";
 
 type review = {
   customer_name: string;
@@ -30,7 +31,7 @@ export default function ReviewListComponent({
         onClick={() => {
           setRating_number(name);
         }}
-        className={`w-20 h-10 flex items-center justify-center gap-1 font-bold border-2 border-black rounded-3xl cursor-pointer transition-colors duration-300 ${
+        className={`p-2 flex items-center justify-center gap-1 font-bold border-2 border-black rounded-2xl cursor-pointer transition-colors duration-300 ${
           rating_number === name ? "bg-black text-white" : "bg-white"
         }`}
       >
@@ -66,7 +67,7 @@ export default function ReviewListComponent({
     <>
       <div className="fixed top-0 left-0 w-full h-screen bg-white overflow-y-auto">
         <Container>
-          <div className="flex flex-col gap-4 p-4">
+          <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <i
                 className="fa-solid fa-arrow-left fa-2x cursor-pointer"
@@ -95,23 +96,24 @@ export default function ReviewListComponent({
                 {reviewList.map((review, index) => (
                   <div
                     key={index}
-                    className="review-item border p-4 rounded-lg shadow-sm"
+                    className="p-3 flex flex-col gap-2 border-2 border-black rounded-lg"
                   >
-                    <div className="flex justify-between mb-2">
-                      <span className="font-semibold">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-lg">
                         {review.customer_name}
                       </span>
-                      <span className="text-sm text-gray-500">
-                        {new Date(review.review_date).toLocaleDateString()}
+                      <span className="p-1 w-14 text-center text-sm border-2 border-black rounded-lg">
+                        ★ {Math.round(review.rating)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-yellow-500">
-                        {"★".repeat(review.rating)}
-                      </span>
-                      <span className="text-gray-700">{review.rating}</span>
+                    <div>
+                      <span>{review.review_text}</span>
                     </div>
-                    <p className="mt-2 text-gray-800">{review.review_text}</p>
+                    <div className="text-right">
+                      {formatDistanceToNow(new Date(review.review_date), {
+                        addSuffix: true,
+                      })}
+                    </div>
                   </div>
                 ))}
               </div>

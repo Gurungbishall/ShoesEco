@@ -23,6 +23,7 @@ export default function Search() {
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const navigate = useNavigate();
   const context = useContext(SearchContext);
+
   if (!context) {
     throw new Error(
       "SearchContext is not available. Make sure you're using it within the SearchContext.Provider."
