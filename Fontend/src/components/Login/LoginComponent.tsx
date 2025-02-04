@@ -6,6 +6,8 @@ import Input from "../Input";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type LoginFormInputs = {
   email: string;
   password: string;
@@ -35,7 +37,7 @@ export default function LoginComponent() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/user/signin",
+        `${baseURL}/user/signin`,
         data,
         {
           withCredentials: true,

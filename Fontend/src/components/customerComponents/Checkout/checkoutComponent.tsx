@@ -4,6 +4,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type CheckOutItem = {
   cart_item_id: number;
   color: string;
@@ -41,7 +43,7 @@ export default function CheckOutComponent() {
 
     try {
       const response = await axios.get<CheckOutResponse>(
-        `http://localhost:3000/user/showcart?customer_id=${customer_id}`,
+        `${baseURL}/user/showcart?customer_id=${customer_id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -88,7 +90,7 @@ export default function CheckOutComponent() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/user/ordershoes",
+        `${baseURL}/user/ordershoes`,
         {
           customer_id: customer_id,
           items: shoes.map((shoe) => ({

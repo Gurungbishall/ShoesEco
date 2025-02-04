@@ -6,6 +6,8 @@ import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import ReviewListComponent from "../ReviewList/ReviewListComponent";
 import LeaveReviewComponent from "../LeaveReview/leaveReview";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type Shoe = {
   shoe_id: number;
   brand_id: number;
@@ -35,7 +37,7 @@ export default function ShoeDetail() {
     if (!shoeId) return;
 
     axios
-      .get(`http://localhost:3000/shoes/shoe?shoe_id=${shoeId}`)
+      .get(`${baseURL}/shoes/shoe?shoe_id=${shoeId}`)
       .then((response) => {
         setShoe(response.data);
         setLoading(false);
@@ -55,7 +57,7 @@ export default function ShoeDetail() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/shoes/addshoe",
+        `${baseURL}/shoes/addshoe`,
         {
           customer_id: customer_id,
           shoe_id: shoeId,

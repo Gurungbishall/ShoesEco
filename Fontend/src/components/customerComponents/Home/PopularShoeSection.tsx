@@ -3,6 +3,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type Shoe = {
   shoe_id: number;
   brand_id: number;
@@ -54,7 +56,7 @@ export default function PopularShoeSection() {
   useEffect(() => {
     const fetchShoes = async () => {
       try {
-        let url = "http://localhost:3000/shoes/showshoes?limit=6";
+        let url = `${baseURL}/shoes/showshoes?limit=6`;
 
         if (brand_name && brand_name !== "All") {
           url += `&brand_name=${brand_name}`;

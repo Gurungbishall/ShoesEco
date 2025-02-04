@@ -3,6 +3,8 @@ import Cookies from "js-cookie";
 import axiosJWT from "../../RefreshTheToken/RefreshTheToken";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type CompletedOrderItem = {
   order_item_id: number;
   color: string;
@@ -34,7 +36,7 @@ export default function CompletedOrderComponent({
 
     try {
       const response = await axiosJWT.get<CompletedOrderItem[]>(
-        `http://localhost:3000/user/completedorder?customer_id=${customer_id}`,
+        `${baseURL}/user/completedorder?customer_id=${customer_id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

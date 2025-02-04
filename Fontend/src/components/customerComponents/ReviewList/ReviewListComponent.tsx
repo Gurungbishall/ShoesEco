@@ -3,6 +3,8 @@ import Container from "../../Container";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type review = {
   customer_name: string;
   rating: number;
@@ -45,7 +47,7 @@ export default function ReviewListComponent({
     const fetchReview = async () => {
       setIsLoading(true);
       try {
-        let url = `http://localhost:3000/shoes/review-list?shoe_id=${shoeId}`;
+        let url = `${baseURL}/shoes/review-list?shoe_id=${shoeId}`;
 
         if (rating_number && rating_number !== "All") {
           url += `&rating_number=${rating_number}`;

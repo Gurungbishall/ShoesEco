@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import Input from "../../Input";
 import Button from "../../Button";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type SignUpFormData = {
   email: string;
   password: string;
@@ -49,7 +51,7 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/user/signup", {
+      const response = await fetch(`${baseURL}/user/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -3,6 +3,8 @@ import Cookies from "js-cookie";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import axiosJWT from "../../RefreshTheToken/RefreshTheToken";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type PendingOrderItem = {
   order_item_id: number;
   color: string;
@@ -33,10 +35,11 @@ export default function PendingOrderComponent({
     }
 
     setLoading(true);
-
+    setError("");
+    
     try {
       const response = await axiosJWT.get<PendingOrderItem[]>(
-        `http://localhost:3000/user/pendingorder?customer_id=${customer_id}`,
+        `${baseURL}/user/pendingorder?customer_id=${customer_id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

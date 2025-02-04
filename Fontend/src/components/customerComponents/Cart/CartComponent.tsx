@@ -9,6 +9,8 @@ import Navbar from "../Navbar/Navbar";
 import DeleteItem from "./DeleteCartComponent";
 import Container from "../../Container";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type CartItem = {
   cart_item_id: number;
   color: string;
@@ -66,7 +68,7 @@ export default function CartComponent() {
 
     try {
       const response = await axiosJWT.get<CartResponse>(
-        `http://localhost:3000/user/showcart?customer_id=${customer_id}`,
+        `${baseURL}/user/showcart?customer_id=${customer_id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -122,7 +124,7 @@ export default function CartComponent() {
       const itemPrice = itemToDelete ? parseFloat(itemToDelete.price) : 0;
 
       await axios.post(
-        "http://localhost:3000/user/deletecartitem",
+        `${baseURL}/user/deletecartitem`,
         { cart_item_id },
         {
           headers: { Authorization: `Bearer ${accessToken}` },

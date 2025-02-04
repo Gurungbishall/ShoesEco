@@ -6,6 +6,8 @@ import Input from "../../Input";
 import Button from "../../Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type IFormInput = {
   full_name: string;
   email: string;
@@ -27,7 +29,7 @@ export default function EditProfile() {
     }
 
     axios
-      .get(`http://localhost:3000/user/getProfile?customer_id=${customer_id}`, {
+      .get(`${baseURL}/user/getProfile?customer_id=${customer_id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -61,7 +63,7 @@ export default function EditProfile() {
       if (!customer_id) return;
 
       const response = await axios.post(
-        "http://localhost:3000/user/editprofile",
+        `${baseURL}/user/editprofile`,
         {
           ...data,
           customer_id,

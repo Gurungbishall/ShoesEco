@@ -2,11 +2,13 @@ import axios from "axios";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import Cookies from "js-cookie";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 const refreshToken = async () => {
   console.log("refreshToken");
 
   try {
-    const res = await axios.post("http://localhost:3000/user/refresh", {
+    const res = await axios.post(`${baseURL}/user/refresh`, {
       withCredentials: true,
     });
 

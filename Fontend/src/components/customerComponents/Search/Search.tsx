@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import { SearchContext } from "../../../pages/customerPages/Home";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 type searchShoe = {
   shoe_id: number;
   brand_id: number;
@@ -53,7 +55,7 @@ export default function Search() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/shoes/searchshoes?model_name=${searchQuery}`
+          `${baseURL}/shoes/searchshoes?model_name=${searchQuery}`
         );
 
         setSearchResults(response.data.data);
