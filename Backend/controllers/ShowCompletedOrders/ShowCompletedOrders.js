@@ -18,7 +18,7 @@ const showCompletedOrder = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: "No Pending Orders" });
+      return res.status(404).json({ message: "No Completed Orders" });
     }
 
     let shoes = result.rows.map((row) => ({
@@ -31,11 +31,11 @@ const showCompletedOrder = async (req, res) => {
       quantity: row.quantity,
     }));
 
-    return res.status(200).json(shoes); 
+    return res.status(200).json(shoes);
   } catch (error) {
-    console.error("Error fetching pending orders:", error);
+    console.error("Error fetching completed orders:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
 };
 
-  export {showCompletedOrder};
+export { showCompletedOrder };
