@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Cookies from "js-cookie";
 import adidas from "../../../pictures/AdidasResponseCLCrystalWhite.png";
 import axiosJWT from "../../RefreshTheToken/RefreshTheToken";

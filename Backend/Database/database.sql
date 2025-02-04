@@ -8,6 +8,7 @@ CREATE TABLE customers (
     password TEXT NOT NULL,  
     phone_number VARCHAR(20),
     address TEXT,
+    is_admin BOOLEAN,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -27,7 +28,7 @@ CREATE TABLE shoes (
     price DECIMAL(10,2) NOT NULL,
     stock_quantity INT DEFAULT 0,
     description TEXT, 
-    rating DECIMAL(3,2) CHECK (rating >= 0 AND rating <= 5), -- rating between 0 and 5
+    average_rating DECIMAL(3,2) CHECK (rating >= 0 AND rating <= 5),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
