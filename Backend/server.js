@@ -7,7 +7,7 @@ import adminRoutes from "./routes/shoes.route.js";
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.Fontend_URL,
   credentials: true,
 };
 
